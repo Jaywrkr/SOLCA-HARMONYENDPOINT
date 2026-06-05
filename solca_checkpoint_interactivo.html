@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Point vs Kaspersky — SOLCA Cuenca</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:   #1B3A6B;
+  --blue2:  #274F8F;
+  --blue-lt:#EBF0F8;
+  --orange: #E8410A;
+  --ora-lt: #FDF0EB;
+  --ora-dk: #B83208;
+  --green:  #1A6B3C;
+  --grn-lt: #EAFAF1;
+  --red:    #C0392B;
+  --red-lt: #FDEDEC;
+  --amber:  #9B590A;
+  --amb-lt: #FEF3E2;
+  --g900:   #111;
+  --g700:   #2E2E2E;
+  --g600:   #444;
+  --g500:   #666;
+  --g400:   #888;
+  --g300:   #BBB;
+  --g100:   #F2F2F0;
+  --g50:    #FAFAF8;
+  --border: #D8DDE8;
+  --white:  #FFF;
+}
+body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min-height:100vh;}
+
+/* ── NAV TABS ── */
+.nav-tabs{
+  background:var(--blue);
+  display:flex; gap:0; overflow-x:auto;
+  border-bottom:3px solid var(--orange);
+  position:sticky; top:0; z-index:100;
+}
+.nav-tab{
+  padding:14px 24px; font-family:'DM Mono',monospace;
+  font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+  color:rgba(255,255,255,0.4); cursor:pointer;
+  border-bottom:3px solid transparent; margin-bottom:-3px;
+  white-space:nowrap; transition:all .2s; border:none;
+  background:none; outline:none;
+}
+.nav-tab:hover{color:rgba(255,255,255,0.75);}
+.nav-tab.active{color:white; border-bottom:3px solid var(--orange);}
+
+/* ── PANELS ── */
+.panel{display:none; animation:fadeIn .25s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── HEADER CARD ── */
+.page-header{
+  background:var(--blue); color:white;
+  padding:40px 56px 36px; position:relative; overflow:hidden;
+}
+.page-header::after{
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:260px; height:260px;
+  border:1px solid rgba(255,255,255,0.06); border-radius:50%;
+}
+.ph-eye{
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(255,255,255,0.3); margin-bottom:12px;
+}
+.ph-title{
+  font-family:'DM Serif Display',serif; font-size:38px;
+  line-height:1.1; margin-bottom:10px;
+}
+.ph-title em{font-style:italic; color:rgba(255,255,255,0.42);}
+.ph-sub{font-size:14px; color:rgba(255,255,255,0.48); font-weight:300;}
+
+/* ── CONTENT WRAP ── */
+.wrap{max-width:960px; margin:0 auto; padding:48px 48px;}
+
+/* ── SECTION LABEL ── */
+.slabel{
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--orange); margin-bottom:16px;
+  display:flex; align-items:center; gap:10px;
+}
+.slabel::after{content:''; flex:1; height:1px; background:var(--border);}
+
+/* ────────────────────────────────────────
+   PANEL 1: SITUACIÓN
+──────────────────────────────────────── */
+
+/* LATENCY CARDS */
+.lat-row{display:grid; grid-template-columns:1fr 48px 1fr; gap:0; margin-bottom:12px;}
+.lat-card{border:1px solid var(--border); padding:24px; background:var(--white);}
+.lat-card.active{background:var(--blue); border-color:var(--blue);}
+.lat-tag{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--g500); margin-bottom:10px;}
+.lat-card.active .lat-tag{color:rgba(255,255,255,0.35);}
+.lat-num{font-family:'DM Serif Display',serif; font-size:52px; line-height:1; color:var(--blue); margin-bottom:8px;}
+.lat-num span{font-size:22px; color:var(--g300);}
+.lat-card.active .lat-num{color:white;}
+.lat-card.active .lat-num span{color:rgba(255,255,255,0.3);}
+.lat-desc{font-size:13px; color:var(--g500); font-weight:300; line-height:1.55;}
+.lat-card.active .lat-desc{color:rgba(255,255,255,0.45);}
+.lat-pill{display:inline-block; margin-top:10px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.07em; text-transform:uppercase; padding:3px 9px; border-radius:2px;}
+.pill-a{background:#FEF3E2; color:#9B590A;}
+.pill-s{background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.5);}
+.lat-arrow{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--g300);}
+.lat-note{background:var(--ora-lt); border-left:3px solid var(--orange); padding:12px 16px; font-size:13px; color:var(--g600); font-weight:300; margin-bottom:32px; font-style:italic;}
+
+/* TECH ACCORDION */
+.accord-item{border:1px solid var(--border); margin-bottom:2px; background:var(--white); overflow:hidden;}
+.accord-head{
+  display:flex; align-items:center; gap:14px; padding:16px 20px;
+  cursor:pointer; transition:background .15s; user-select:none;
+}
+.accord-head:hover{background:var(--g50);}
+.accord-head.open{background:var(--blue-lt); border-bottom:1px solid var(--border);}
+.accord-num{font-family:'DM Mono',monospace; font-size:11px; color:var(--orange); font-weight:500; min-width:22px;}
+.accord-title{font-size:14px; font-weight:500; color:var(--blue); flex:1;}
+.accord-icon{font-size:18px; color:var(--g300); transition:transform .2s;}
+.accord-head.open .accord-icon{transform:rotate(45deg); color:var(--blue);}
+.accord-body{display:none; padding:16px 20px 20px 56px;}
+.accord-body.open{display:block;}
+.accord-body p{font-size:13px; color:var(--g500); font-weight:300; line-height:1.7; margin-bottom:10px;}
+.accord-src{font-family:'DM Mono',monospace; font-size:10px; color:var(--g300);}
+.accord-src a{color:var(--blue2);}
+
+/* AD note */
+.info-box{background:var(--blue-lt); border:1px solid var(--border); border-left:4px solid var(--blue); padding:20px 24px; margin-top:32px;}
+.info-box-title{font-size:14px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.info-box p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.7;}
+
+/* ────────────────────────────────────────
+   PANEL 2: COMPARATIVA
+──────────────────────────────────────── */
+.comp-intro{font-size:14px; color:var(--g500); font-weight:300; margin-bottom:28px; line-height:1.6;}
+
+/* category filter */
+.filter-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.filt-btn{
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.08em; text-transform:uppercase;
+  padding:6px 14px; border-radius:2px; cursor:pointer;
+  border:1px solid var(--border); background:var(--white);
+  color:var(--g500); transition:all .15s;
+}
+.filt-btn:hover{border-color:var(--blue2); color:var(--blue);}
+.filt-btn.active{background:var(--blue); border-color:var(--blue); color:white;}
+
+.comp-table{width:100%; border-collapse:collapse; border:1px solid var(--border); font-size:13px; margin-bottom:32px;}
+.comp-table thead th{
+  background:var(--blue); color:rgba(255,255,255,0.7);
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.09em; text-transform:uppercase;
+  padding:12px 16px; text-align:left; font-weight:400;
+}
+.comp-table thead th:nth-child(1){width:130px;}
+.comp-table thead th:nth-child(2){width:220px;}
+.comp-table tbody tr{border-bottom:1px solid var(--border); transition:background .12s;}
+.comp-table tbody tr:last-child{border-bottom:none;}
+.comp-table tbody tr:hover{background:var(--blue-lt);}
+.comp-table tbody tr.hidden{display:none;}
+.comp-table td{padding:13px 16px; vertical-align:middle;}
+.comp-table .cat-cell{
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.07em; text-transform:uppercase;
+  color:var(--g400); font-weight:400;
+}
+.comp-table .feat-cell{font-size:13px; font-weight:500; color:var(--g700);}
+.comp-table .note-cell{font-size:12px; color:var(--g500); font-weight:300;}
+
+/* check / cross / warn */
+.ic{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; font-size:12px; font-weight:700;}
+.ic-ok{background:var(--grn-lt); color:var(--green);}
+.ic-no{background:var(--red-lt); color:var(--red);}
+.ic-wn{background:var(--amb-lt); color:var(--amber);}
+
+/* tooltip */
+.has-tip{position:relative; cursor:help;}
+.tooltip{
+  display:none; position:absolute; left:50%; top:calc(100% + 6px);
+  transform:translateX(-50%); width:240px;
+  background:var(--g900); color:white;
+  font-family:'Outfit',sans-serif; font-size:12px; font-weight:300;
+  padding:10px 14px; border-radius:4px; z-index:200; line-height:1.55;
+  box-shadow:0 4px 20px rgba(0,0,0,0.25);
+}
+.tooltip::before{
+  content:''; position:absolute; bottom:100%; left:50%; transform:translateX(-50%);
+  border:5px solid transparent; border-bottom-color:var(--g900);
+}
+.has-tip:hover .tooltip{display:block;}
+
+/* ────────────────────────────────────────
+   PANEL 3: MÓDULOS EN RIESGO
+──────────────────────────────────────── */
+.risk-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px;}
+.risk-card{
+  background:var(--white); border:1px solid var(--border);
+  padding:20px; cursor:pointer; transition:all .2s;
+  position:relative; overflow:hidden;
+}
+.risk-card::before{
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:4px; background:var(--g300); transition:background .2s;
+}
+.risk-card.critical::before{background:var(--red);}
+.risk-card.high::before{background:var(--amber);}
+.risk-card:hover{border-color:var(--blue); transform:translateY(-2px); box-shadow:0 4px 16px rgba(27,58,107,0.1);}
+.risk-card:hover::before{background:var(--orange);}
+.risk-card.selected{border-color:var(--blue); background:var(--blue-lt);}
+
+.rc-top{display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;}
+.rc-name{font-size:14px; font-weight:600; color:var(--blue);}
+.rc-badge{
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.06em;
+  text-transform:uppercase; padding:3px 8px; border-radius:2px; flex-shrink:0; margin-left:8px;
+}
+.rc-badge.critical{background:var(--red-lt); color:var(--red);}
+.rc-badge.high{background:var(--amb-lt); color:var(--amber);}
+.rc-sub{font-size:12px; color:var(--g400); font-weight:300; margin-bottom:10px;}
+.rc-protects{font-size:12px; color:var(--g500); font-weight:300; line-height:1.55;}
+
+.risk-detail{
+  background:var(--white); border:1px solid var(--border);
+  border-left:4px solid var(--orange); padding:24px;
+  margin-bottom:32px; display:none;
+}
+.risk-detail.visible{display:block; animation:fadeIn .2s ease;}
+.rd-title{font-size:16px; font-weight:600; color:var(--blue); margin-bottom:6px;}
+.rd-sub{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--orange); margin-bottom:14px;}
+.rd-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+.rd-col-title{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--g400); margin-bottom:8px; font-family:'DM Mono',monospace;}
+.rd-col p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.65;}
+.rd-col.danger p{color:var(--red);}
+
+/* ────────────────────────────────────────
+   PANEL 4: INCIDENTES
+──────────────────────────────────────── */
+.incidents{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border:1px solid var(--border); margin-bottom:32px;}
+.inc{background:var(--white); padding:20px; cursor:pointer; transition:background .15s;}
+.inc:hover{background:var(--blue-lt);}
+.inc.selected{background:var(--blue); color:white;}
+.inc-year{font-family:'DM Mono',monospace; font-size:10px; color:var(--g300); margin-bottom:6px;}
+.inc.selected .inc-year{color:rgba(255,255,255,0.35);}
+.inc-title{font-size:13px; font-weight:600; color:var(--blue); margin-bottom:6px;}
+.inc.selected .inc-title{color:white;}
+.inc-short{font-size:12px; color:var(--g500); font-weight:300; line-height:1.55;}
+.inc.selected .inc-short{color:rgba(255,255,255,0.55);}
+.inc-stat{margin-top:8px; font-family:'DM Mono',monospace; font-size:10px; color:var(--orange);}
+.inc.selected .inc-stat{color:rgba(255,255,255,0.6);}
+
+.inc-detail{
+  border:1px solid var(--border); background:var(--white);
+  padding:24px; display:none; margin-bottom:32px;
+}
+.inc-detail.visible{display:grid; grid-template-columns:1fr 1fr; gap:24px; animation:fadeIn .2s ease;}
+.id-left{}
+.id-tag{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+.id-title{font-size:20px; font-weight:600; color:var(--blue); margin-bottom:10px; font-family:'DM Serif Display',serif;}
+.id-body{font-size:13px; color:var(--g500); font-weight:300; line-height:1.7;}
+.id-src a{font-family:'DM Mono',monospace; font-size:10px; color:var(--blue2); margin-top:10px; display:inline-block;}
+.id-stats{display:flex; flex-direction:column; gap:12px;}
+.id-stat-card{background:var(--g100); padding:14px 16px; border-radius:2px;}
+.id-stat-num{font-family:'DM Serif Display',serif; font-size:28px; color:var(--blue); margin-bottom:2px;}
+.id-stat-label{font-size:12px; color:var(--g500); font-weight:300;}
+.id-lesson{background:var(--ora-lt); border-left:3px solid var(--orange); padding:12px 16px; margin-top:12px;}
+.id-lesson-title{font-size:11px; font-weight:600; color:var(--orange); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; font-family:'DM Mono',monospace;}
+.id-lesson p{font-size:12px; color:var(--g600); font-weight:300; line-height:1.6;}
+
+/* ────────────────────────────────────────
+   PANEL 5: ARGUMENTO FINAL
+──────────────────────────────────────── */
+.closing{
+  background:var(--blue); padding:40px;
+  text-align:center; margin-bottom:32px; position:relative; overflow:hidden;
+}
+.closing::before{
+  content:''; position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:400px; height:400px;
+  border:1px solid rgba(255,255,255,0.04); border-radius:50%;
+}
+.closing-bar{width:36px; height:3px; background:var(--orange); margin:0 auto 16px;}
+.closing-pre{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-bottom:14px;}
+.closing-q{font-family:'DM Serif Display',serif; font-size:22px; line-height:1.4; color:white; max-width:540px; margin:0 auto 12px;}
+.closing-q em{color:rgba(255,255,255,0.4); font-style:italic;}
+.closing-sub{font-size:12px; color:rgba(255,255,255,0.28); font-weight:300; max-width:460px; margin:0 auto;}
+
+.arg-cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:32px;}
+.arg-card{background:var(--white); border:1px solid var(--border); padding:20px;}
+.arg-n{font-family:'DM Mono',monospace; font-size:11px; color:var(--orange); margin-bottom:8px;}
+.arg-title{font-size:14px; font-weight:600; color:var(--blue); margin-bottom:8px; line-height:1.3;}
+.arg-body{font-size:12px; color:var(--g500); font-weight:300; line-height:1.6;}
+
+.src-list{padding-top:24px; border-top:1px solid var(--border);}
+.src-title{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--g300); margin-bottom:12px;}
+.src-item{display:flex; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); align-items:flex-start;}
+.src-item:last-child{border-bottom:none;}
+.src-n{font-family:'DM Mono',monospace; font-size:10px; color:var(--orange); min-width:20px; margin-top:1px;}
+.src-t{font-size:12px; color:var(--g500); font-weight:300; line-height:1.5;}
+.src-t strong{color:var(--g700); font-weight:500;}
+.src-t a{color:var(--blue2); word-break:break-all;}
+
+/* ── FOOTER ── */
+.footer{background:var(--blue); padding:18px 56px; display:flex; justify-content:space-between; align-items:center; margin-top:0;}
+.footer-l{display:flex; align-items:center; gap:8px;}
+.footer-dot{width:7px; height:7px; background:var(--orange); border-radius:50%;}
+.footer-brand{font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase;}
+.footer-date{font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,0.18);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showPanel('p1',this)">01 — Situación</button>
+  <button class="nav-tab" onclick="showPanel('p2',this)">02 — Comparativa</button>
+  <button class="nav-tab" onclick="showPanel('p3',this)">03 — Módulos en riesgo</button>
+  <button class="nav-tab" onclick="showPanel('p4',this)">04 — Incidentes reales</button>
+  <button class="nav-tab" onclick="showPanel('p5',this)">05 — Argumentario</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 1: SITUACIÓN
+═══════════════════════════════════ -->
+<div id="p1" class="panel active">
+  <div class="page-header">
+    <div class="ph-eye">Coresolutions · SOLCA Cuenca · Uso interno</div>
+    <div class="ph-title">Por qué la latencia subió<br><em>y por qué es correcto</em></div>
+    <div class="ph-sub">Check Point Harmony Endpoint vs. Kaspersky ESB Select + EDR Optimum</div>
+  </div>
+  <div class="wrap">
+
+    <div class="slabel">El dato en cuestión</div>
+    <div class="lat-row">
+      <div class="lat-card">
+        <div class="lat-tag">Kaspersky (antes)</div>
+        <div class="lat-num">&lt;1<span>ms</span></div>
+        <div class="lat-desc">Inspección post-ejecución. Deja pasar y analiza después en cloud sandbox. Eso fue EDR Optimum.</div>
+        <div class="lat-pill pill-a">Inspección asincrónica</div>
+      </div>
+      <div class="lat-arrow">→</div>
+      <div class="lat-card active">
+        <div class="lat-tag">Check Point Harmony (ahora)</div>
+        <div class="lat-num">~2<span>ms</span></div>
+        <div class="lat-desc">Inspección inline sincrónica a nivel de kernel. Analiza antes de permitir cada operación de archivo, proceso y red.</div>
+        <div class="lat-pill pill-s">Inspección sincrónica</div>
+      </div>
+    </div>
+    <div class="lat-note">
+      1 ms adicional = la diferencia entre un guardia que revisa credenciales <strong>al entrar</strong> vs. uno que revisa <strong>después de que el visitante ya pasó</strong>.
+    </div>
+
+    <div class="slabel">Por qué sube la latencia — clic para expandir</div>
+
+    <div class="accord-item">
+      <div class="accord-head" onclick="toggleAccord(this)">
+        <span class="accord-num">01</span>
+        <span class="accord-title">File System Filter Driver — intercepción a nivel de kernel</span>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <p>Harmony Endpoint instala un minifilter (IRP hook) que intercepta cada operación de archivo antes de que el SO la complete. Cada lectura, escritura o ejecución pasa por el motor de análisis antes de ser aprobada. Kaspersky EDR Optimum hacía gran parte de este análisis en cloud sandbox de forma asincrónica — no bloqueaba, detectaba.</p>
+        <p>Resultado: Kaspersky no añadía latencia perceptible porque no bloqueaba. Check Point añade latencia porque sí bloquea — en tiempo real, antes del daño.</p>
+        <div class="accord-src">Ref: <a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/CP_R81.20_Harmony_Endpoint_Server_AdminGuide.pdf" target="_blank">Check Point Harmony Endpoint Admin Guide R81.20</a></div>
+      </div>
+    </div>
+
+    <div class="accord-item">
+      <div class="accord-head" onclick="toggleAccord(this)">
+        <span class="accord-num">02</span>
+        <span class="accord-title">Network Stack Hooking — inspección de tráfico AD en tiempo real</span>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <p>El agente inspecciona conexiones de red antes de que se establezcan. Las solicitudes al Active Directory, bases de datos y aplicaciones internas pasan por este filtro. Eso añade microsegundos por operación — muy visible en AD-autenticación porque ocurre constantemente.</p>
+        <p>Esto explica específicamente el problema del día de instalación: el AD de SOLCA ya tenía 4GB de RAM al 100% (subdimensionado), y al sumársele la inspección de red de Harmony, los tiempos de respuesta se dispararon. El módulo causante se ajustó correctamente.</p>
+        <div class="accord-src">Ref: <a href="https://support.checkpoint.com" target="_blank">Check Point Support Center — Harmony Endpoint Network Performance</a></div>
+      </div>
+    </div>
+
+    <div class="accord-item">
+      <div class="accord-head" onclick="toggleAccord(this)">
+        <span class="accord-num">03</span>
+        <span class="accord-title">Behavioral Guard — análisis de procesos en ejecución</span>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <p>Cada proceso iniciado es analizado en busca de inyección maliciosa (T1055), escalada de privilegios (T1068) y movimiento lateral. Es el módulo más exigente en CPU/memoria porque monitorea llamadas al sistema en tiempo real.</p>
+        <p>Usuarios de Gartner Peer Insights documentan consistentemente este comportamiento: la misma característica que hace a Harmony Endpoint más eficiente en detección, produce mayor uso de recursos que soluciones de análisis post-ejecución.</p>
+        <div class="accord-src">Ref: <a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">Gartner Peer Insights — Harmony Endpoint</a> · <a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">MITRE ATT&CK Evaluations — Check Point</a></div>
+      </div>
+    </div>
+
+    <div class="accord-item">
+      <div class="accord-head" onclick="toggleAccord(this)">
+        <span class="accord-num">04</span>
+        <span class="accord-title">Es el patrón de la industria — no exclusivo de Check Point</span>
+        <span class="accord-icon">+</span>
+      </div>
+      <div class="accord-body">
+        <p>AV-Comparatives Business Security Tests documentan que soluciones con inspección sincrónica (Check Point, CrowdStrike, SentinelOne) presentan mayor impacto en rendimiento que soluciones con análisis post-ejecución. Es un trade-off conocido y documentado: más inspección real = más latencia.</p>
+        <p>La pregunta correcta no es "¿por qué es más lento?" sino "¿qué hubiera pasado si el ransomware llegaba mientras Kaspersky analizaba en cloud después de que el archivo ya se ejecutó?"</p>
+        <div class="accord-src">Ref: <a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">AV-Comparatives — Business Security Test Aug–Nov 2023</a></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">El AD es un problema separado — no lo mezcles en la conversación</div>
+      <p>El Active Directory con 4 GB de RAM al 100% genera latencia en toda la red con o sin Harmony Endpoint. El conflicto del día de instalación fue un ajuste puntual, ya resuelto. El problema estructural es infraestructura subdimensionada preexistente. Son dos conversaciones distintas: una sobre seguridad (Harmony), otra sobre capacidad del servidor AD (recomendación: 8–16 GB RAM).</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 2: COMPARATIVA
+═══════════════════════════════════ -->
+<div id="p2" class="panel">
+  <div class="page-header">
+    <div class="ph-eye">Comparativa de capacidades</div>
+    <div class="ph-title">Check Point vs. Kaspersky<br><em>feature por feature</em></div>
+    <div class="ph-sub">Datos extraídos de la comparativa oficial Check Point y del listado de features de SOLCA</div>
+  </div>
+  <div class="wrap">
+    <p class="comp-intro">Filtra por categoría. Pasa el cursor sobre las celdas con ⓘ para ver detalles.</p>
+
+    <div class="filter-row">
+      <button class="filt-btn active" onclick="filterComp('all',this)">Todas</button>
+      <button class="filt-btn" onclick="filterComp('VPN',this)">VPN</button>
+      <button class="filt-btn" onclick="filterComp('EPP',this)">EPP + NGAV</button>
+      <button class="filt-btn" onclick="filterComp('EDR',this)">EDR</button>
+      <button class="filt-btn" onclick="filterComp('FDE',this)">Cifrado</button>
+      <button class="filt-btn" onclick="filterComp('SASE',this)">SASE</button>
+      <button class="filt-btn" onclick="filterComp('gap',this)">Solo brechas</button>
+    </div>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Capacidad</th>
+          <th style="width:110px;text-align:center;">Harmony<br>Adv + Elite</th>
+          <th>Kaspersky ESB<br>Select + EDR</th>
+        </tr>
+      </thead>
+      <tbody id="comp-tbody">
+
+        <!-- VPN -->
+        <tr data-cat="VPN">
+          <td class="cat-cell">VPN</td>
+          <td class="feat-cell">Remote Access VPN</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell">Requiere módulo adicional / configuración separada</td>
+        </tr>
+
+        <!-- EPP -->
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Anti-Malware / Antivirus</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo tienen</td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Bot protection</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> No protege contra C&amp;C
+            <div class="tooltip">Kaspersky no bloquea comunicaciones con servidores de Comando y Control en tiempo real en este tier. Require producto de red separado.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Application Control</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Requiere licencia adicional
+            <div class="tooltip">En Kaspersky ESB Select, Application Control existe pero con funcionalidad limitada. El control granular requiere licencia superior (Total).</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Zero-day Phishing</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Solo reputación de URL
+            <div class="tooltip">Kaspersky bloquea sitios conocidos de phishing por base de datos. Harmony Endpoint usa inspección activa de contenido en tiempo real — detecta sitios nuevos no listados aún.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Malicious site protection (unknown)</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Basado en reputación URL
+            <div class="tooltip">Solo bloquea dominios ya catalogados como maliciosos. Sitios nuevos o recién registrados no son bloqueados hasta que aparecen en la base de datos.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP gap">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Corporate Password Protection</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no" style="background:#FDEDEC;color:#C0392B;">✗</span> <strong style="color:#C0392B;">No protege credenciales</strong>
+            <div class="tooltip">BRECHA CRÍTICA: Kaspersky ESB Select + EDR Optimum no tiene protección contra reutilización de credenciales corporativas ni detección de credential dumping en este tier.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Host Firewall</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo incluyen</td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Anti-Ransomware + IA</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Solo usa Shadow Copy
+            <div class="tooltip">Kaspersky se apoya en Windows Shadow Copy para recuperación. Harmony Endpoint combina Shadow Copy + File Decoys (archivos trampa) + IA comportamental para detección temprana antes de cifrado masivo.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Threat Intelligence</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen feeds de inteligencia</td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Ransomware encrypted files restoration</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Usa Shadow Copy (Windows)
+            <div class="tooltip">La restauración de Kaspersky depende de Shadow Copy habilitado en Windows. Si el ransomware deshabilita Shadow Copy (técnica común), no hay recuperación. Harmony Endpoint tiene respaldo propio independiente del SO.</div>
+          </td>
+        </tr>
+
+        <!-- EDR -->
+        <tr data-cat="EDR gap">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">MITRE ATT&CK Mapping</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin evaluación MITRE por 3 años
+            <div class="tooltip">Según la comparativa oficial de Check Point, Kaspersky no participó en evaluaciones MITRE ATT&CK durante los últimos 3 años. Harmony Endpoint tiene mapeo nativo de técnicas MITRE en sus reportes de incidentes.</div>
+          </td>
+        </tr>
+        <tr data-cat="EDR">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">Threat Hunting</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Incluido en EDR Optimum</td>
+        </tr>
+        <tr data-cat="EDR gap">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">Sandbox / Threat Emulation</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Sin reporte desde sandbox
+            <div class="tooltip">La integración de Kaspersky con su Sandbox no genera reportes detallados en el tier Select + EDR Optimum. Harmony Endpoint muestra análisis completo de comportamiento del archivo en sandbox con evidencia forense.</div>
+          </td>
+        </tr>
+        <tr data-cat="EDR gap">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">CDR — Content Disarm &amp; Reconstruction</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> No limpia exploits desconocidos
+            <div class="tooltip">CDR (Threat Extraction en Harmony) reconstruye documentos eliminando contenido activo potencialmente malicioso antes de entregarlo al usuario. Kaspersky no tiene esta capacidad en el tier evaluado.</div>
+          </td>
+        </tr>
+
+        <!-- FDE -->
+        <tr data-cat="FDE">
+          <td class="cat-cell">Cifrado</td>
+          <td class="feat-cell">Disk Encryption (FDE)</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen cifrado de disco</td>
+        </tr>
+        <tr data-cat="FDE">
+          <td class="cat-cell">Cifrado</td>
+          <td class="feat-cell">Media encryption &amp; port protection</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Incluido en Select</td>
+        </tr>
+
+        <!-- SASE -->
+        <tr data-cat="SASE gap">
+          <td class="cat-cell">SASE</td>
+          <td class="feat-cell">Secure Remote Users &amp; Branches</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin producto equivalente
+            <div class="tooltip">Kaspersky no tiene una oferta SASE nativa integrada en su plataforma de endpoint. Requeriría solución de terceros. Harmony Endpoint Elite incluye capacidades SASE a través de Infinity Portal.</div>
+          </td>
+        </tr>
+        <tr data-cat="SASE gap">
+          <td class="cat-cell">SASE</td>
+          <td class="feat-cell">ZTNA — Zero Trust Network Access</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin producto equivalente
+            <div class="tooltip">Zero Trust Network Access no está disponible en Kaspersky ESB Select + EDR Optimum. Este es un differenciador importante especialmente para los equipos remotos y sucursales de SOLCA.</div>
+          </td>
+        </tr>
+
+        <!-- Elite exclusivos -->
+        <tr data-cat="EDR">
+          <td class="cat-cell">Elite only</td>
+          <td class="feat-cell">Vulnerability Management</td>
+          <td style="text-align:center;"><span class="ic ic-ok" style="background:#E8F5E9;color:#1B5E20;">✓ Elite</span></td>
+          <td class="note-cell">No disponible en este tier de Kaspersky</td>
+        </tr>
+        <tr data-cat="EDR">
+          <td class="cat-cell">Elite only</td>
+          <td class="feat-cell">Patch Management</td>
+          <td style="text-align:center;"><span class="ic ic-ok" style="background:#E8F5E9;color:#1B5E20;">✓ Elite</span></td>
+          <td class="note-cell">No disponible en este tier de Kaspersky</td>
+        </tr>
+        <tr data-cat="EDR">
+          <td class="cat-cell">Elite only</td>
+          <td class="feat-cell">Infinity XDR/XPR</td>
+          <td style="text-align:center;"><span class="ic ic-ok" style="background:#E8F5E9;color:#1B5E20;">✓ Elite</span></td>
+          <td class="note-cell">Requiere licencia separada DER Expert en Kaspersky</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 3: MÓDULOS EN RIESGO
+═══════════════════════════════════ -->
+<div id="p3" class="panel">
+  <div class="page-header">
+    <div class="ph-eye">Si se desactivan módulos para bajar latencia...</div>
+    <div class="ph-title">Lo que SOLCA dejaría<br><em>desprotegido</em></div>
+    <div class="ph-sub">Clic en cada módulo para ver qué protege y qué pasa si se apaga</div>
+  </div>
+  <div class="wrap">
+
+    <div class="risk-detail" id="risk-detail">
+      <div class="rd-title" id="rd-title"></div>
+      <div class="rd-sub" id="rd-sub"></div>
+      <div class="rd-grid">
+        <div class="rd-col">
+          <div class="rd-col-title">Qué protege</div>
+          <p id="rd-protects"></p>
+        </div>
+        <div class="rd-col danger">
+          <div class="rd-col-title">Riesgo si se desactiva</div>
+          <p id="rd-risk"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slabel">Módulos de alto impacto — selecciona uno</div>
+    <div class="risk-grid" id="risk-grid">
+
+      <div class="risk-card critical" onclick="showRisk(this,'Anti-Ransomware + IA','critical','Shadow Copy + File Decoy + IA comportamental',
+        'Monitoreo activo de patrones de cifrado masivo de archivos. Usa File Decoys (archivos trampa) que activan la alerta cuando son tocados por un proceso. Combinado con IA comportamental detecta ransomware en sus primeras acciones, antes de que cifre más de 5-10 archivos.',
+        'El ransomware puede cifrar cientos o miles de registros clínicos antes de ser detectado. Sin File Decoys ni IA, la detección solo ocurre cuando el daño ya es masivo. En SOLCA: expedientes de pacientes oncológicos potencialmente irrecuperables.')">
+        <div class="rc-top">
+          <div class="rc-name">Anti-Ransomware + IA</div>
+          <div class="rc-badge critical">Crítico</div>
+        </div>
+        <div class="rc-sub">Shadow Copy · File Decoy · IA comportamental</div>
+        <div class="rc-protects">Bloquea cifrado masivo en tiempo real antes de que el daño sea extenso.</div>
+      </div>
+
+      <div class="risk-card critical" onclick="showRisk(this,'Behavioral Guard','critical','Detección de comportamiento anómalo en procesos',
+        'Monitorea cada proceso en busca de técnicas de ataque: inyección de código (T1055), escalada de privilegios (T1068), movimiento lateral (T1021), credential dumping (T1003). No depende de firmas conocidas — detecta comportamiento.',
+        'Un atacante con acceso a un solo equipo puede moverse lateralmente por toda la red de SOLCA sin ser detectado. Herramientas como Mimikatz para robo de credenciales del AD pasarían sin alerta. Esto es exactamente lo que usó RansomHouse en el Hospital Clínic de Barcelona.')">
+        <div class="rc-top">
+          <div class="rc-name">Behavioral Guard</div>
+          <div class="rc-badge critical">Crítico</div>
+        </div>
+        <div class="rc-sub">Análisis comportamental · Sin dependencia de firmas</div>
+        <div class="rc-protects">Detecta amenazas desconocidas por comportamiento, no por firma. Clave contra zero-days.</div>
+      </div>
+
+      <div class="risk-card critical" onclick="showRisk(this,'Threat Emulation (Sandbox)','critical','Análisis de documentos antes de abrirlos',
+        'Ejecuta en sandbox cada archivo adjunto, PDF, Word, Excel antes de entregarlo al usuario. Detecta exploits embebidos en documentos aparentemente legítimos. Disponible en Advanced y Elite.',
+        'Un PDF o Excel malicioso enviado por correo puede comprometer el sistema antes de que el usuario lo abra visualmente. En un entorno hospitalario, esto puede dar acceso a la base de datos de pacientes. Es el vector de ataque más común en phishing dirigido (spear phishing) contra hospitales.')">
+        <div class="rc-top">
+          <div class="rc-name">Threat Emulation</div>
+          <div class="rc-badge critical">Crítico</div>
+        </div>
+        <div class="rc-sub">Sandbox · Análisis pre-apertura de documentos</div>
+        <div class="rc-protects">Analiza documentos en entorno aislado antes de que el usuario pueda abrirlos.</div>
+      </div>
+
+      <div class="risk-card critical" onclick="showRisk(this,'Threat Extraction (CDR)','critical','Content Disarm and Reconstruction',
+        'Reconstruye documentos eliminando todo contenido activo potencialmente malicioso (macros, scripts, campos dinámicos, objetos embebidos) antes de entregarlo al usuario. El usuario recibe el documento limpio mientras el original se analiza en sandbox.',
+        'Sin CDR, documentos con macros maliciosas o exploits embebidos llegan intactos al usuario. En SOLCA, donde el personal clínico recibe constantemente documentos de proveedores y pacientes, esto es una superficie de ataque continua. Kaspersky no tiene CDR en el tier contratado.')">
+        <div class="rc-top">
+          <div class="rc-name">Threat Extraction (CDR)</div>
+          <div class="rc-badge critical">Crítico</div>
+        </div>
+        <div class="rc-sub">Limpieza activa de documentos maliciosos</div>
+        <div class="rc-protects">Entrega documentos limpios al usuario mientras analiza el original en sandbox.</div>
+      </div>
+
+      <div class="risk-card high" onclick="showRisk(this,'Zero Phishing','high','Inspección activa de URLs en tiempo real',
+        'Inspecciona URLs en tiempo real antes de que la página cargue — no depende de listas negras estáticas. Detecta sitios de phishing recién creados que aún no están en ninguna base de datos. Incluye protección contra reutilización de contraseñas corporativas.',
+        'Sin Zero Phishing, los usuarios de SOLCA pueden acceder a sitios de phishing diseñados específicamente para parecer proveedores médicos o sistemas de salud. Las credenciales del AD podrían ser comprometidas por este vector, dando acceso remoto a la red interna del hospital.')">
+        <div class="rc-top">
+          <div class="rc-name">Zero Phishing</div>
+          <div class="rc-badge high">Alto</div>
+        </div>
+        <div class="rc-sub">Inspección URL real-time · Sin listas estáticas</div>
+        <div class="rc-protects">Bloquea sitios de phishing desconocidos antes de que la página cargue.</div>
+      </div>
+
+      <div class="risk-card high" onclick="showRisk(this,'Corporate Password Protection','high','Prevención de reutilización y robo de credenciales',
+        'Detecta cuando un usuario intenta reutilizar contraseñas corporativas en sitios externos, o cuando un proceso intenta extraer hashes de contraseñas del sistema. Protección contra credential dumping (Mimikatz et al.).',
+        'Las credenciales del AD de SOLCA son la llave maestra de toda su infraestructura. Sin esta protección, un atacante que obtenga una contraseña corporativa puede intentar usarla en múltiples sistemas. Kaspersky ESB Select + EDR Optimum NO tiene esta protección — es una brecha explícita en la comparativa oficial.')">
+        <div class="rc-top">
+          <div class="rc-name">Corporate Password Protection</div>
+          <div class="rc-badge high">Alto</div>
+        </div>
+        <div class="rc-sub">Credential dumping · Reutilización de contraseñas</div>
+        <div class="rc-protects">Protege credenciales del AD contra extracción y reutilización. Kaspersky no lo tenía.</div>
+      </div>
+
+    </div>
+
+    <div class="info-box">
+      <p>Cualquier ajuste de módulos debe quedar documentado formalmente con la firma del responsable de SOLCA, aceptando explícitamente la reducción de cobertura de seguridad. Es la práctica estándar en proyectos de seguridad gestionada.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 4: INCIDENTES
+═══════════════════════════════════ -->
+<div id="p4" class="panel">
+  <div class="page-header">
+    <div class="ph-eye">No es riesgo teórico</div>
+    <div class="ph-title">Hospitales reales,<br><em>consecuencias reales</em></div>
+    <div class="ph-sub">Selecciona cada caso para ver el detalle — todos tienen fuente verificada</div>
+  </div>
+  <div class="wrap">
+
+    <div class="inc-detail" id="inc-detail">
+      <div class="id-left">
+        <div class="id-tag" id="id-tag"></div>
+        <div class="id-title" id="id-title"></div>
+        <div class="id-body" id="id-body"></div>
+        <div class="id-src"><a id="id-src-a" href="#" target="_blank"></a></div>
+        <div class="id-lesson">
+          <div class="id-lesson-title">Lección para SOLCA</div>
+          <p id="id-lesson"></p>
+        </div>
+      </div>
+      <div class="id-stats" id="id-stats"></div>
+    </div>
+
+    <div class="slabel">Casos documentados — selecciona para expandir</div>
+    <div class="incidents">
+      <div class="inc" id="inc0" onclick="showInc(0)">
+        <div class="inc-year">Marzo 2023 — España</div>
+        <div class="inc-title">Hospital Clínic de Barcelona</div>
+        <div class="inc-short">RansomHouse paralizó urgencias, laboratorio y farmacia de un hospital oncológico líder.</div>
+        <div class="inc-stat">↑ Oncología radioterapéutica afectada directamente</div>
+      </div>
+      <div class="inc" id="inc1" onclick="showInc(1)">
+        <div class="inc-year">Mayo 2022 — Costa Rica</div>
+        <div class="inc-title">CCSS — Sistema Nacional de Salud</div>
+        <div class="inc-short">Hive Ransomware obligó a volver a expedientes de papel en todo el sistema de salud nacional.</div>
+        <div class="inc-stat">↑ 996 servidores infectados, decenas de hospitales</div>
+      </div>
+      <div class="inc" id="inc2" onclick="showInc(2)">
+        <div class="inc-year">2023–2024 — LATAM</div>
+        <div class="inc-title">Sector salud LATAM — Kaspersky</div>
+        <div class="inc-short">560.000 ataques de ransomware bloqueados en empresas latinoamericanas. Salud entre los más atacados.</div>
+        <div class="inc-stat">↑ Datos oficiales Kaspersky LATAM 2024</div>
+      </div>
+    </div>
+
+    <div class="slabel" style="margin-top:32px;">La pregunta central</div>
+    <div class="closing">
+      <div class="closing-bar"></div>
+      <div class="closing-pre">La pregunta central</div>
+      <div class="closing-q">"¿Cuánto cuesta para SOLCA un incidente de ransomware en sus sistemas clínicos, <em>frente a 1 milisegundo adicional de latencia?"</em></div>
+      <div class="closing-sub">Hospital Clínic de Barcelona: €4.5M de rescate exigido + semanas de operación manual + 3.000 citas canceladas. Todo porque tenían protección insuficiente.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 5: ARGUMENTARIO
+═══════════════════════════════════ -->
+<div id="p5" class="panel">
+  <div class="page-header">
+    <div class="ph-eye">Coresolutions — Argumentario para uso en reunión</div>
+    <div class="ph-title">Los tres argumentos<br><em>que defienden la herramienta</em></div>
+  </div>
+  <div class="wrap">
+
+    <div class="slabel">Argumentos clave</div>
+    <div class="arg-cards">
+      <div class="arg-card">
+        <div class="arg-n">ARG 01</div>
+        <div class="arg-title">La latencia es el precio de la protección real</div>
+        <div class="arg-body">Kaspersky analizaba después de ejecutar. Check Point analiza antes. La diferencia de 1ms es exactamente ese cambio: de detección reactiva a prevención activa. No es un defecto, es la arquitectura.</div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-n">ARG 02</div>
+        <div class="arg-title">Desactivar módulos no baja la latencia — baja la seguridad</div>
+        <div class="arg-body">Los módulos que más consumen son Anti-Ransomware, Behavioral Guard y Sandbox. Son exactamente los que protegen contra el vector de ataque más común en hospitales. Quitarlos equivale a dejar entrar sin revisión.</div>
+      </div>
+      <div class="arg-card">
+        <div class="arg-n">ARG 03</div>
+        <div class="arg-title">El AD es un problema de infraestructura preexistente</div>
+        <div class="arg-body">4 GB de RAM al 100% es un servidor subdimensionado independiente de Harmony. El conflicto del día de instalación fue un ajuste ya resuelto. Son dos conversaciones: seguridad (Harmony) e infraestructura (AD).</div>
+      </div>
+    </div>
+
+    <div class="closing" style="margin-bottom:32px;">
+      <div class="closing-bar"></div>
+      <div class="closing-q">"¿Cuánto le cuesta a SOLCA un incidente de ransomware en sus sistemas clínicos, <em>frente a 1 ms adicional?"</em></div>
+      <div class="closing-sub">Cualquier reducción de módulos de seguridad debe quedar documentada y firmada por el responsable del cliente, aceptando explícitamente la reducción de cobertura.</div>
+    </div>
+
+    <div class="src-list">
+      <div class="src-title">Referencias verificadas</div>
+      <div class="src-item">
+        <span class="src-n">01</span>
+        <div class="src-t"><strong>Check Point Harmony Endpoint Admin Guide R81.20</strong> — Arquitectura del agente, File System Filter Driver, Behavioral Guard.<br><a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/CP_R81.20_Harmony_Endpoint_Server_AdminGuide.pdf" target="_blank">sc1.checkpoint.com — PDF oficial</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">02</span>
+        <div class="src-t"><strong>MITRE ATT&CK Evaluations — Check Point</strong> — Evaluación independiente de capacidades de detección y bloqueo.<br><a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">attackevals.mitre-engenuity.org</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">03</span>
+        <div class="src-t"><strong>AV-Comparatives Business Security Test Aug–Nov 2023</strong> — Impacto en rendimiento de soluciones EPP.<br><a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">av-comparatives.org</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">04</span>
+        <div class="src-t"><strong>Gartner Peer Insights — Harmony Endpoint reviews</strong> — Opiniones verificadas de usuarios reales sobre rendimiento.<br><a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">gartner.com</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">05</span>
+        <div class="src-t"><strong>Hospital Clínic de Barcelona — Comunicado oficial ciberataque 2023</strong><br><a href="https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona" target="_blank">clinicbarcelona.org</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">06</span>
+        <div class="src-t"><strong>CCSS Costa Rica — Ataque Hive Ransomware 2022</strong> — WeLiveSecurity / ESET<br><a href="https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/" target="_blank">welivesecurity.com</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">07</span>
+        <div class="src-t"><strong>Kaspersky LATAM — Panorama de Amenazas Corporativas 2023–2024</strong> — 560.000 ataques ransomware bloqueados en empresas LATAM.<br><a href="https://latam.kaspersky.com/about/press-releases/empresas-de-america-latina-enfrentaron-mas-de-268-millones-de-ataques-en-un-ano-segun-kaspersky" target="_blank">latam.kaspersky.com</a></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-l">
+    <div class="footer-dot"></div>
+    <div class="footer-brand">Coresolutions S.A. — Uso interno</div>
+  </div>
+  <div class="footer-date">Junio 2025 · SOLCA Cuenca · Check Point Harmony Endpoint</div>
+</div>
+
+<script>
+// ── PANEL SWITCH ──
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── ACCORDION ──
+function toggleAccord(head) {
+  const body = head.nextElementSibling;
+  const isOpen = head.classList.contains('open');
+  document.querySelectorAll('.accord-head').forEach(h => {
+    h.classList.remove('open');
+    h.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    head.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ── COMP TABLE FILTER ──
+function filterComp(cat, btn) {
+  document.querySelectorAll('.filt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#comp-tbody tr').forEach(tr => {
+    if (cat === 'all') { tr.classList.remove('hidden'); return; }
+    const cats = tr.dataset.cat || '';
+    tr.classList.toggle('hidden', !cats.includes(cat));
+  });
+}
+
+// ── RISK CARDS ──
+function showRisk(card, name, level, sub, protects, risk) {
+  document.querySelectorAll('.risk-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('rd-title').textContent = name;
+  document.getElementById('rd-sub').textContent = sub;
+  document.getElementById('rd-protects').textContent = protects;
+  document.getElementById('rd-risk').textContent = risk;
+  const det = document.getElementById('risk-detail');
+  det.classList.add('visible');
+  det.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── INCIDENTS ──
+const incData = [
+  {
+    tag: 'Marzo 2023 — Barcelona, España',
+    title: 'Hospital Clínic de Barcelona',
+    body: 'El 5 de marzo de 2023, RansomHouse atacó el Hospital Clínic de Barcelona — institución oncológica de referencia. Los sistemas de urgencias, laboratorio y farmacia quedaron fuera de servicio. El personal debió operar manualmente, como hace 20 años. Los atacantes robaron 4.5 TB de datos de pacientes, investigaciones oncológicas y ensayos clínicos, y publicaron todo cuando el hospital rechazó pagar €4.2M de rescate.',
+    src: 'https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona',
+    srcLabel: 'Fuente oficial — Hospital Clínic de Barcelona →',
+    lesson: 'SOLCA es un hospital oncológico como el Clínic. La pregunta no es si puede pasar — es cuándo. Sin Behavioral Guard y Anti-Ransomware activos, el escenario es idéntico.',
+    stats: [
+      {num: '3.000+', label: 'consultas y operaciones canceladas'},
+      {num: '4.5 TB', label: 'datos de pacientes robados y publicados'},
+      {num: '€4.2M', label: 'rescate exigido — no pagado, datos filtrados igual'},
+      {num: 'Semanas', label: 'de operación 100% manual, papel y lápiz'}
+    ]
+  },
+  {
+    tag: 'Mayo 2022 — Costa Rica',
+    title: 'CCSS — Caja Costarricense de Seguro Social',
+    body: 'El 31 de mayo de 2022, Hive Ransomware Group atacó la CCSS, el sistema nacional de salud de Costa Rica. Se infectaron servidores y terminales en hospitales de todo el país. La CCSS ordenó apagar todos los sistemas como medida de contención — incluyendo el EDUS (Expediente Digital Único en Salud), que almacena los registros médicos de toda la población. Los hospitales volvieron a expedientes de papel.',
+    src: 'https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/',
+    srcLabel: 'Fuente — WeLiveSecurity / ESET →',
+    lesson: 'Si SOLCA pierde acceso a su sistema clínico, la atención oncológica se paraliza. Los tratamientos de quimioterapia y radioterapia dependen de sistemas informatizados. No es una interrupción de negocio — es un riesgo de vida.',
+    stats: [
+      {num: '996', label: 'servidores de la CCSS disponibles — todos apagados'},
+      {num: '30+', label: 'hospitales volvieron a operación en papel'},
+      {num: 'Semanas', label: 'sin EDUS (expediente digital de pacientes)'},
+      {num: 'Hive RG', label: 'grupo especializado en atacar salud pública'}
+    ]
+  },
+  {
+    tag: '2023–2024 — América Latina',
+    title: 'Panorama regional — Kaspersky LATAM',
+    body: 'Entre octubre de 2023 y octubre de 2024, Kaspersky bloqueó 268.3 millones de ataques de malware en empresas latinoamericanas, incluyendo aproximadamente 560.000 ataques de ransomware. El sector salud figura entre los sectores más atacados de la región junto con gobierno y manufactura. Los atacantes priorizan hospitales porque la urgencia de recuperar acceso a sistemas clínicos los hace más propensos a pagar rescates.',
+    src: 'https://latam.kaspersky.com/about/press-releases/empresas-de-america-latina-enfrentaron-mas-de-268-millones-de-ataques-en-un-ano-segun-kaspersky',
+    srcLabel: 'Fuente — Kaspersky LATAM Press Release →',
+    lesson: 'Ecuador no es una excepción. La región está bajo ataque activo y el sector salud es objetivo prioritario. SOLCA, como institución oncológica de referencia en el austro ecuatoriano, tiene exactamente el perfil de víctima que buscan estos grupos.',
+    stats: [
+      {num: '268M', label: 'ataques de malware bloqueados en LATAM (12 meses)'},
+      {num: '560K', label: 'ataques de ransomware en empresas de la región'},
+      {num: '2/min', label: 'empresas latinoamericanas atacadas por ransomware'},
+      {num: 'Top 3', label: 'Salud entre los 3 sectores más atacados en LATAM'}
+    ]
+  }
+];
+
+function showInc(i) {
+  document.querySelectorAll('.inc').forEach((el,idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  const d = incData[i];
+  document.getElementById('id-tag').textContent = d.tag;
+  document.getElementById('id-title').textContent = d.title;
+  document.getElementById('id-body').textContent = d.body;
+  const a = document.getElementById('id-src-a');
+  a.href = d.src; a.textContent = d.srcLabel;
+  document.getElementById('id-lesson').textContent = d.lesson;
+  const stats = document.getElementById('id-stats');
+  stats.innerHTML = d.stats.map(s => `
+    <div class="id-stat-card">
+      <div class="id-stat-num">${s.num}</div>
+      <div class="id-stat-label">${s.label}</div>
+    </div>`).join('');
+  const det = document.getElementById('inc-detail');
+  det.classList.add('visible');
+  det.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>
+</body>
+</html>
