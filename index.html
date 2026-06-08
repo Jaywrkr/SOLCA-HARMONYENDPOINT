@@ -135,6 +135,32 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 .info-box-title{font-size:14px; font-weight:600; color:var(--blue); margin-bottom:8px;}
 .info-box p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.7;}
 
+
+
+/* LATENCY CONTEXT */
+.context-intro{font-size:14px; color:var(--g500); font-weight:300; line-height:1.65; margin-bottom:18px;}
+.ms-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px;}
+.ms-card{background:var(--white); border:1px solid var(--border); padding:18px 16px; cursor:pointer; transition:all .18s; position:relative; overflow:hidden;}
+.ms-card::before{content:''; position:absolute; left:0; top:0; right:0; height:3px; background:var(--g300); transition:background .18s;}
+.ms-card:hover{border-color:var(--blue); transform:translateY(-2px); box-shadow:0 4px 14px rgba(27,58,107,0.08);}
+.ms-card.selected{background:var(--blue); border-color:var(--blue);}
+.ms-card.selected::before{background:var(--orange);}
+.ms-num{font-family:'DM Serif Display',serif; font-size:34px; color:var(--blue); line-height:1; margin-bottom:6px;}
+.ms-num span{font-size:15px; color:var(--g300);}
+.ms-card.selected .ms-num{color:white;}
+.ms-card.selected .ms-num span{color:rgba(255,255,255,0.35);}
+.ms-label{font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--g400); line-height:1.5;}
+.ms-card.selected .ms-label{color:rgba(255,255,255,0.45);}
+.ms-detail{background:var(--white); border:1px solid var(--border); border-left:4px solid var(--orange); padding:20px 24px; margin-bottom:28px; display:none;}
+.ms-detail.visible{display:block; animation:fadeIn .2s ease;}
+.ms-detail-title{font-size:16px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.ms-detail-body{font-size:13px; color:var(--g500); font-weight:300; line-height:1.7;}
+.ms-reality{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px;}
+.ms-reality-card{background:var(--blue-lt); border:1px solid var(--border); padding:18px 20px;}
+.ms-reality-card strong{display:block; font-size:13px; color:var(--blue); margin-bottom:6px;}
+.ms-reality-card p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.65;}
+@media(max-width:760px){.ms-grid{grid-template-columns:1fr 1fr}.ms-reality{grid-template-columns:1fr}}
+
 /* ────────────────────────────────────────
    PANEL 2: COMPARATIVA
 ──────────────────────────────────────── */
@@ -414,6 +440,45 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       <div class="info-box-title">Active Directory debe evaluarse como componente crítico de autenticación</div>
       <p>Active Directory es un servicio central para el acceso de usuarios, políticas y recursos internos. Si opera con recursos ajustados o alta utilización, puede generar demoras en autenticación y acceso a aplicaciones, independientemente de la solución endpoint instalada. La recomendación es validar memoria, CPU, disco, eventos del sistema y volumen de consultas, y dimensionar el servidor de acuerdo con la carga real del entorno.</p>
     </div>
+
+    <div class="slabel">Qué significa realmente 1 ms adicional — selecciona un punto</div>
+    <p class="context-intro">Pasar de &lt;1 ms a ~2 ms puede parecer “el doble” si se mira como porcentaje. En operación real, sigue siendo una diferencia extremadamente pequeña frente a los tiempos que normalmente percibe una persona al usar una aplicación o un sistema clínico.</p>
+
+    <div class="ms-grid">
+      <div class="ms-card selected" onclick="showMs(this,'Aumento observado','~1 ms adicional equivale a 0,001 segundos. Es medible técnicamente, pero por sí solo no debería sentirse como lentitud para el usuario final. Lo importante es entender qué se ganó: inspección previa de archivos, procesos, red y credenciales antes de permitir la acción.')">
+        <div class="ms-num">1<span>ms</span></div>
+        <div class="ms-label">Aumento observado</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,'Respuesta percibida como instantánea','En diseño de interacción, respuestas alrededor de 100 ms todavía suelen percibirse como inmediatas para una persona. El aumento observado está muy por debajo de ese rango.')">
+        <div class="ms-num">100<span>ms</span></div>
+        <div class="ms-label">Percepción instantánea</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,'Buena experiencia en aplicaciones','Google usa 200 ms como referencia exigente para una buena interacción web en la métrica INP. Esto no significa que todo sistema clínico mida igual, pero sirve para dimensionar la escala: 1 ms adicional está muy por debajo de ese umbral.')">
+        <div class="ms-num">200<span>ms</span></div>
+        <div class="ms-label">Buena interacción</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,'Interrupción del flujo de trabajo','A partir de tiempos cercanos a 1 segundo, el usuario ya puede sentir una pausa clara en su flujo de trabajo. Esa escala es cientos de veces mayor que el aumento observado.')">
+        <div class="ms-num">1000<span>ms</span></div>
+        <div class="ms-label">Pausa perceptible</div>
+      </div>
+    </div>
+
+    <div class="ms-detail visible" id="ms-detail">
+      <div class="ms-detail-title" id="ms-title">Aumento observado</div>
+      <div class="ms-detail-body" id="ms-body">~1 ms adicional equivale a 0,001 segundos. Es medible técnicamente, pero por sí solo no debería sentirse como lentitud para el usuario final. Lo importante es entender qué se ganó: inspección previa de archivos, procesos, red y credenciales antes de permitir la acción.</div>
+    </div>
+
+    <div class="ms-reality">
+      <div class="ms-reality-card">
+        <strong>Lectura correcta del dato</strong>
+        <p>El incremento puede sonar grande al compararlo porcentualmente, pero en tiempo absoluto sigue siendo mínimo. No se debe evaluar solo como “se duplicó”, sino como “aumentó alrededor de 0,001 segundos por operación inspeccionada”.</p>
+      </div>
+      <div class="ms-reality-card">
+        <strong>Lectura para SOLCA</strong>
+        <p>En una clínica oncológica, el riesgo relevante no es 1 ms adicional. El riesgo real es permitir que ransomware, robo de credenciales, archivos maliciosos o comportamiento anómalo pasen sin revisión previa.</p>
+      </div>
+    </div>
+
 
   </div>
 </div>
@@ -783,6 +848,17 @@ function toggleAccord(head) {
     head.classList.add('open');
     body.classList.add('open');
   }
+}
+
+
+
+// ── LATENCY CONTEXT ──
+function showMs(card, title, body) {
+  document.querySelectorAll('.ms-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('ms-title').textContent = title;
+  document.getElementById('ms-body').textContent = body;
+  document.getElementById('ms-detail').classList.add('visible');
 }
 
 // ── COMP TABLE FILTER ──
