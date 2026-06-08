@@ -240,8 +240,43 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 .rd-col p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.65;}
 .rd-col.danger p{color:var(--red);}
 
+
 /* ────────────────────────────────────────
-   PANEL 4: INCIDENTES
+   PANEL 4: EXPERIENCIA DE USUARIO
+──────────────────────────────────────── */
+.ms-summary{
+  background:var(--white); border:1px solid var(--border);
+  padding:24px; margin-bottom:28px;
+}
+.ms-summary-title{font-size:18px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.ms-summary p{font-size:13px; color:var(--g500); font-weight:300; line-height:1.7; margin-bottom:10px;}
+.ms-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--border); border:1px solid var(--border); margin-bottom:28px;}
+.ms-card{background:var(--white); padding:20px; cursor:pointer; transition:background .15s;}
+.ms-card:hover{background:var(--blue-lt);}
+.ms-card.selected{background:var(--blue); color:white;}
+.ms-num{font-family:'DM Serif Display',serif; font-size:38px; line-height:1; color:var(--blue); margin-bottom:6px;}
+.ms-card.selected .ms-num{color:white;}
+.ms-label{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+.ms-card.selected .ms-label{color:rgba(255,255,255,0.55);}
+.ms-desc{font-size:12px; color:var(--g500); font-weight:300; line-height:1.55;}
+.ms-card.selected .ms-desc{color:rgba(255,255,255,0.55);}
+.ms-detail{
+  display:none; background:var(--white); border:1px solid var(--border);
+  border-left:4px solid var(--orange); padding:24px; margin-bottom:32px;
+}
+.ms-detail.visible{display:grid; grid-template-columns:1fr 1fr; gap:24px; animation:fadeIn .2s ease;}
+.ms-detail-title{font-size:18px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.ms-detail-body{font-size:13px; color:var(--g500); font-weight:300; line-height:1.7;}
+.ms-detail-body p{margin-bottom:10px;}
+.ms-metric{background:var(--g100); padding:18px 20px;}
+.ms-metric-num{font-family:'DM Serif Display',serif; font-size:42px; color:var(--blue); line-height:1; margin-bottom:6px;}
+.ms-metric-label{font-size:12px; color:var(--g500); font-weight:300; line-height:1.5;}
+.ms-conclusion{background:var(--ora-lt); border-left:3px solid var(--orange); padding:16px 20px; font-size:13px; color:var(--g600); font-weight:300; line-height:1.7; margin-bottom:32px;}
+.ms-sources{font-family:'DM Mono',monospace; font-size:10px; color:var(--g300); line-height:1.8;}
+.ms-sources a{color:var(--blue2);}
+
+/* ────────────────────────────────────────
+   PANEL 5: INCIDENTES
 ──────────────────────────────────────── */
 .incidents{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border:1px solid var(--border); margin-bottom:32px;}
 .inc{background:var(--white); padding:20px; cursor:pointer; transition:background .15s;}
@@ -322,8 +357,9 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showPanel('p1',this)">01 — Situación</button>
   <button class="nav-tab" onclick="showPanel('p2',this)">02 — Comparativa</button>
-  <button class="nav-tab" onclick="showPanel('p4',this)">03 — Incidentes reales</button>
-  <button class="nav-tab" onclick="showPanel('p5',this)">04 — Referencias</button>
+  <button class="nav-tab" onclick="showPanel('p4',this)">04 — Experiencia de usuario</button>
+  <button class="nav-tab" onclick="showPanel('p5',this)">05 — Incidentes reales</button>
+  <button class="nav-tab" onclick="showPanel('p6',this)">06 — Referencias</button>
 </div>
 
 <!-- ═══════════════════════════════════
@@ -362,58 +398,58 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
     <div class="accord-item">
       <div class="accord-head" onclick="toggleAccord(this)">
         <span class="accord-num">01</span>
-        <span class="accord-title">File System Filter Driver — intercepción a nivel de kernel</span>
+        <span class="accord-title">Behavioral Guard — monitoreo de comportamiento en tiempo real</span>
         <span class="accord-icon">+</span>
       </div>
       <div class="accord-body">
-        <p>Harmony Endpoint instala un minifilter (IRP hook) que intercepta cada operación de archivo antes de que el SO la complete. Cada lectura, escritura o ejecución pasa por el motor de análisis antes de ser aprobada. Kaspersky EDR Optimum hacía gran parte de este análisis en cloud sandbox de forma asincrónica — no bloqueaba, detectaba.</p>
-        <p>Resultado: Kaspersky no añadía latencia perceptible porque no bloqueaba. Check Point añade latencia porque sí bloquea — en tiempo real, antes del daño.</p>
-        <div class="accord-src">Ref: <a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/CP_R81.20_Harmony_Endpoint_Server_AdminGuide.pdf" target="_blank">Check Point Harmony Endpoint Admin Guide R81.20</a></div>
+        <p>Behavioral Guard monitorea archivos, procesos y actividad de red para identificar comportamientos sospechosos. Este tipo de control no depende únicamente de firmas conocidas: observa qué está intentando hacer un proceso y lo compara contra patrones de ataque, como ejecución anómala, movimientos laterales o intentos de manipulación de archivos.</p>
+        <p>Este es uno de los controles que más puede influir en consumo local, porque trabaja de forma continua sobre eventos del endpoint. Su valor está en detectar amenazas que todavía no tienen firma o que intentan actuar como procesos legítimos.</p>
+        <div class="accord-src">Ref: <a href="https://sc1.checkpoint.com/documents/Infinity_Portal/WebAdminGuides/EN/Harmony-Endpoint-Admin-Guide/Topics-HEP/Behavioral-Protection.htm" target="_blank">Check Point — Behavioral Protection</a></div>
       </div>
     </div>
 
     <div class="accord-item">
       <div class="accord-head" onclick="toggleAccord(this)">
         <span class="accord-num">02</span>
-        <span class="accord-title">Inspección de tráfico de autenticación y servicios internos</span>
+        <span class="accord-title">Es el patrón de la industria — no exclusivo de Check Point</span>
         <span class="accord-icon">+</span>
       </div>
       <div class="accord-body">
-        <p>Harmony Endpoint inspecciona conexiones de red antes de permitir su establecimiento. En un entorno corporativo, esto incluye consultas de autenticación, acceso a servicios de directorio, bases de datos y aplicaciones internas. Al tratarse de operaciones frecuentes, el control de seguridad puede sumar microsegundos por operación, especialmente en procesos donde la autenticación se consulta de forma constante.</p>
-        <p>En el caso de Active Directory, su rendimiento depende directamente de la capacidad disponible del servidor y de la carga que tenga al momento de responder solicitudes. Si el servidor de directorio opera con recursos limitados o alta utilización de memoria/CPU, cualquier inspección adicional de seguridad puede hacer más visible la latencia existente. Por eso, la recomendación técnica es revisar la capacidad del servidor AD y asegurar recursos suficientes para sostener autenticación, políticas y consultas internas sin degradación.</p>
-        <div class="accord-src">Ref: <a href="https://support.checkpoint.com" target="_blank">Check Point Support Center — Harmony Endpoint Network Performance</a></div>
+        <p>Las soluciones modernas de endpoint que hacen prevención, análisis de comportamiento, protección contra ransomware y evaluación de amenazas desconocidas pueden tener mayor impacto que soluciones centradas principalmente en antivirus tradicional o detección posterior.</p>
+        <p>El punto técnico es simple: cuando una herramienta revisa más capas antes de permitir una acción, existe un costo medible. Ese costo debe compararse contra el beneficio de bloquear ransomware, robo de credenciales, phishing y comportamiento malicioso antes de que el daño ocurra.</p>
+        <div class="accord-src">Ref: <a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">AV-Comparatives — Business Security Test Aug–Nov 2023</a></div>
       </div>
     </div>
 
     <div class="accord-item">
       <div class="accord-head" onclick="toggleAccord(this)">
         <span class="accord-num">03</span>
-        <span class="accord-title">Behavioral Guard — análisis de procesos en ejecución</span>
+        <span class="accord-title">Inspección de tráfico de autenticación y servicios internos</span>
         <span class="accord-icon">+</span>
       </div>
       <div class="accord-body">
-        <p>Cada proceso iniciado es analizado en busca de inyección maliciosa (T1055), escalada de privilegios (T1068) y movimiento lateral. Es el módulo más exigente en CPU/memoria porque monitorea llamadas al sistema en tiempo real.</p>
-        <p>Usuarios de Gartner Peer Insights documentan consistentemente este comportamiento: la misma característica que hace a Harmony Endpoint más eficiente en detección, produce mayor uso de recursos que soluciones de análisis post-ejecución.</p>
-        <div class="accord-src">Ref: <a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">Gartner Peer Insights — Harmony Endpoint</a> · <a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">MITRE ATT&CK Evaluations — Check Point</a></div>
+        <p>En un entorno corporativo, muchas aplicaciones dependen de autenticación, políticas, permisos y consultas internas. Cuando el endpoint agrega controles adicionales sobre actividad de red y comportamiento, esas operaciones pueden tener una pequeña carga adicional, especialmente si se consultan de forma constante.</p>
+        <p>En Active Directory, la respuesta final no depende solo del agente instalado en los equipos. También depende de la capacidad del servidor, la utilización de memoria y CPU, la salud del sistema operativo, el disco, los eventos del servicio y el volumen real de consultas. Si el servicio de directorio ya trabaja con recursos ajustados, cualquier capa adicional de validación puede hacer más visible una latencia que ya existía.</p>
+        <div class="accord-src">Ref: <a href="https://support.checkpoint.com" target="_blank">Check Point Support Center — Harmony Endpoint Network Performance</a></div>
       </div>
     </div>
 
     <div class="accord-item">
       <div class="accord-head" onclick="toggleAccord(this)">
         <span class="accord-num">04</span>
-        <span class="accord-title">Es el patrón de la industria — no exclusivo de Check Point</span>
+        <span class="accord-title">File System Monitoring — revisión de operaciones de archivos</span>
         <span class="accord-icon">+</span>
       </div>
       <div class="accord-body">
-        <p>AV-Comparatives Business Security Tests documentan que soluciones con inspección sincrónica (Check Point, CrowdStrike, SentinelOne) presentan mayor impacto en rendimiento que soluciones con análisis post-ejecución. Es un trade-off conocido y documentado: más inspección real = más latencia.</p>
-        <p>La pregunta correcta no es "¿por qué es más lento?" sino "¿qué hubiera pasado si el ransomware llegaba mientras Kaspersky analizaba en cloud después de que el archivo ya se ejecutó?"</p>
-        <div class="accord-src">Ref: <a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">AV-Comparatives — Business Security Test Aug–Nov 2023</a></div>
+        <p>La documentación de Check Point indica que el componente de Anti-Ransomware, Behavioral Guard y Forensics monitorea operaciones de archivos, procesos y actividad de red en busca de comportamiento sospechoso. También indica que Anti-Ransomware utiliza archivos señuelo y puede detener un ataque cuando detecta que ransomware los modifica.</p>
+        <p>Por eso es correcto explicar que ahora se revisan más operaciones relacionadas con archivos que antes podían pasar con menor control. Para ser precisos, no hace falta afirmar que “cada operación” se bloquea siempre a nivel de kernel; lo defendible es que Harmony agrega monitoreo local más profundo sobre archivos, procesos y red, y esa inspección adicional puede aportar latencia medible.</p>
+        <div class="accord-src">Ref: <a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/Content/Topics-EPSG-R81.20/Forensics.html" target="_blank">Check Point — Anti-Ransomware, Behavioral Guard and Forensics</a></div>
       </div>
     </div>
 
     <div class="info-box">
       <div class="info-box-title">Active Directory debe evaluarse como componente crítico de autenticación</div>
-      <p>Active Directory es un servicio central para el acceso de usuarios, políticas y recursos internos. Si opera con recursos ajustados o alta utilización, puede generar demoras en autenticación y acceso a aplicaciones, independientemente de la solución endpoint instalada. La recomendación es validar memoria, CPU, disco, eventos del sistema y volumen de consultas, y dimensionar el servidor de acuerdo con la carga real del entorno.</p>
+      <p>Active Directory es un servicio central para el acceso de usuarios, políticas y recursos internos. Si el servidor opera con recursos ajustados o alta utilización, puede generar demoras en autenticación y acceso a aplicaciones, independientemente de la solución endpoint instalada. La recomendación es revisar memoria, CPU, disco, eventos del sistema, salud del servicio y volumen de consultas, para confirmar que el directorio tenga capacidad suficiente para responder sin degradación.</p>
     </div>
 
 
@@ -432,7 +468,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
     <div class="ph-sub">Datos extraídos de la comparativa oficial Check Point y del listado de features de SOLCA</div>
   </div>
   <div class="wrap">
-    <p class="comp-intro">Filtra por categoría. Pasa el cursor sobre las celdas con ⓘ para ver detalles.</p>
+    <p class="comp-intro">La tabla está ordenada por impacto esperado en inspección/latencia: primero los controles que revisan comportamiento, archivos, documentos y credenciales; luego los controles de protección general y acceso. Filtra por categoría. Pasa el cursor sobre las celdas con ⓘ para ver detalles.</p>
 
     <div class="filter-row">
       <button class="filt-btn active" onclick="filterComp('all',this)">Todas</button>
@@ -455,67 +491,6 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       </thead>
       <tbody id="comp-tbody">
 
-        <!-- VPN -->
-        <tr data-cat="VPN">
-          <td class="cat-cell">VPN</td>
-          <td class="feat-cell">Remote Access VPN</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell">Requiere módulo adicional / configuración separada</td>
-        </tr>
-
-        <!-- EPP -->
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Anti-Malware / Antivirus</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo tienen</td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Bot protection</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> No protege contra C&amp;C
-            <div class="tooltip">Kaspersky no bloquea comunicaciones con servidores de Comando y Control en tiempo real en este tier. Require producto de red separado.</div>
-          </td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Application Control</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Requiere licencia adicional
-            <div class="tooltip">En Kaspersky ESB Select, Application Control existe pero con funcionalidad limitada. El control granular requiere licencia superior (Total).</div>
-          </td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Zero-day Phishing</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Solo reputación de URL
-            <div class="tooltip">Kaspersky bloquea sitios conocidos de phishing por base de datos. Harmony Endpoint usa inspección activa de contenido en tiempo real — detecta sitios nuevos no listados aún.</div>
-          </td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Malicious site protection (unknown)</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Basado en reputación URL
-            <div class="tooltip">Solo bloquea dominios ya catalogados como maliciosos. Sitios nuevos o recién registrados no son bloqueados hasta que aparecen en la base de datos.</div>
-          </td>
-        </tr>
-        <tr data-cat="EPP gap">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Corporate Password Protection</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-no" style="background:#FDEDEC;color:#C0392B;">✗</span> <strong style="color:#C0392B;">No protege credenciales</strong>
-            <div class="tooltip">BRECHA CRÍTICA: Kaspersky ESB Select + EDR Optimum no tiene protección contra reutilización de credenciales corporativas ni detección de credential dumping en este tier.</div>
-          </td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Host Firewall</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo incluyen</td>
-        </tr>
         <tr data-cat="EPP">
           <td class="cat-cell">EPP</td>
           <td class="feat-cell">Anti-Ransomware + IA</td>
@@ -526,33 +501,11 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
         </tr>
         <tr data-cat="EPP">
           <td class="cat-cell">EPP</td>
-          <td class="feat-cell">Threat Intelligence</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen feeds de inteligencia</td>
-        </tr>
-        <tr data-cat="EPP">
-          <td class="cat-cell">EPP</td>
           <td class="feat-cell">Ransomware encrypted files restoration</td>
           <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
           <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Usa Shadow Copy (Windows)
             <div class="tooltip">La restauración de Kaspersky depende de Shadow Copy habilitado en Windows. Si el ransomware deshabilita Shadow Copy (técnica común), no hay recuperación. Harmony Endpoint tiene respaldo propio independiente del SO.</div>
           </td>
-        </tr>
-
-        <!-- EDR -->
-        <tr data-cat="EDR gap">
-          <td class="cat-cell">EDR</td>
-          <td class="feat-cell">MITRE ATT&CK Mapping</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin evaluación MITRE por 3 años
-            <div class="tooltip">Según la comparativa oficial de Check Point, Kaspersky no participó en evaluaciones MITRE ATT&CK durante los últimos 3 años. Harmony Endpoint tiene mapeo nativo de técnicas MITRE en sus reportes de incidentes.</div>
-          </td>
-        </tr>
-        <tr data-cat="EDR">
-          <td class="cat-cell">EDR</td>
-          <td class="feat-cell">Threat Hunting</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Incluido en EDR Optimum</td>
         </tr>
         <tr data-cat="EDR gap">
           <td class="cat-cell">EDR</td>
@@ -570,40 +523,78 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
             <div class="tooltip">CDR (Threat Extraction en Harmony) reconstruye documentos eliminando contenido activo potencialmente malicioso antes de entregarlo al usuario. Kaspersky no tiene esta capacidad en el tier evaluado.</div>
           </td>
         </tr>
-
-        <!-- FDE -->
-        <tr data-cat="FDE">
-          <td class="cat-cell">Cifrado</td>
-          <td class="feat-cell">Disk Encryption (FDE)</td>
+        <tr data-cat="EPP gap">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Corporate Password Protection</td>
           <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen cifrado de disco</td>
-        </tr>
-        <tr data-cat="FDE">
-          <td class="cat-cell">Cifrado</td>
-          <td class="feat-cell">Media encryption &amp; port protection</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell"><span class="ic ic-ok">✓</span> Incluido en Select</td>
-        </tr>
-
-        <!-- SASE -->
-        <tr data-cat="SASE gap">
-          <td class="cat-cell">SASE</td>
-          <td class="feat-cell">Secure Remote Users &amp; Branches</td>
-          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin producto equivalente
-            <div class="tooltip">Kaspersky no tiene una oferta SASE nativa integrada en su plataforma de endpoint. Requeriría solución de terceros. Harmony Endpoint Elite incluye capacidades SASE a través de Infinity Portal.</div>
+          <td class="note-cell has-tip"><span class="ic ic-no" style="background:#FDEDEC;color:#C0392B;">✗</span> <strong style="color:#C0392B;">No protege credenciales</strong>
+            <div class="tooltip">BRECHA CRÍTICA: Kaspersky ESB Select + EDR Optimum no tiene protección contra reutilización de credenciales corporativas ni detección de credential dumping en este tier.</div>
           </td>
         </tr>
-        <tr data-cat="SASE gap">
-          <td class="cat-cell">SASE</td>
-          <td class="feat-cell">ZTNA — Zero Trust Network Access</td>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Zero-day Phishing</td>
           <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
-          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin producto equivalente
-            <div class="tooltip">Zero Trust Network Access no está disponible en Kaspersky ESB Select + EDR Optimum. Este es un differenciador importante especialmente para los equipos remotos y sucursales de SOLCA.</div>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Solo reputación de URL
+            <div class="tooltip">Kaspersky bloquea sitios conocidos de phishing por base de datos. Harmony Endpoint usa inspección activa de contenido en tiempo real — detecta sitios nuevos no listados aún.</div>
           </td>
         </tr>
-
-        <!-- Elite exclusivos -->
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Malicious site protection</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Basado en reputación URL
+            <div class="tooltip">Solo bloquea dominios ya catalogados como maliciosos. Sitios nuevos o recién registrados no son bloqueados hasta que aparecen en la base de datos.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Bot protection</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> No protege contra C&amp;C
+            <div class="tooltip">Kaspersky no bloquea comunicaciones con servidores de Comando y Control en tiempo real en este tier. Requiere producto de red separado.</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Application Control</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-wn">!</span> Requiere licencia adicional
+            <div class="tooltip">En Kaspersky ESB Select, Application Control existe pero con funcionalidad limitada. El control granular requiere licencia superior (Total).</div>
+          </td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Host Firewall</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo incluyen</td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Anti-Malware / Antivirus</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos lo tienen</td>
+        </tr>
+        <tr data-cat="EPP">
+          <td class="cat-cell">EPP</td>
+          <td class="feat-cell">Threat Intelligence</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen feeds de inteligencia</td>
+        </tr>
+        <tr data-cat="EDR gap">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">MITRE ATT&CK Mapping</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin evaluación MITRE por 3 años
+            <div class="tooltip">Según la comparativa oficial de Check Point, Kaspersky no participó en evaluaciones MITRE ATT&CK durante los últimos 3 años. Harmony Endpoint tiene mapeo nativo de técnicas MITRE en sus reportes de incidentes.</div>
+          </td>
+        </tr>
+        <tr data-cat="EDR">
+          <td class="cat-cell">EDR</td>
+          <td class="feat-cell">Threat Hunting</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Incluido en EDR Optimum</td>
+        </tr>
         <tr data-cat="EDR">
           <td class="cat-cell">Elite only</td>
           <td class="feat-cell">Vulnerability Management</td>
@@ -622,6 +613,26 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
           <td style="text-align:center;"><span class="ic ic-ok" style="background:#E8F5E9;color:#1B5E20;">✓ Elite</span></td>
           <td class="note-cell">Requiere licencia separada DER Expert en Kaspersky</td>
         </tr>
+        <tr data-cat="SASE gap">
+          <td class="cat-cell">SASE</td>
+          <td class="feat-cell">ZTNA — Zero Trust Network Access</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell has-tip"><span class="ic ic-no">✗</span> Sin producto equivalente
+            <div class="tooltip">Zero Trust Network Access no está disponible en Kaspersky ESB Select + EDR Optimum. Este es un diferenciador importante especialmente para los equipos remotos y sucursales de SOLCA.</div>
+          </td>
+        </tr>
+        <tr data-cat="VPN">
+          <td class="cat-cell">VPN</td>
+          <td class="feat-cell">Remote Access VPN</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell">Requiere módulo adicional / configuración separada</td>
+        </tr>
+        <tr data-cat="FDE">
+          <td class="cat-cell">Cifrado</td>
+          <td class="feat-cell">Disk Encryption (FDE)</td>
+          <td style="text-align:center;"><span class="ic ic-ok">✓</span></td>
+          <td class="note-cell"><span class="ic ic-ok">✓</span> Ambos incluyen cifrado de disco</td>
+        </tr>
 
       </tbody>
     </table>
@@ -629,10 +640,87 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
   </div>
 </div>
 
+
 <!-- ═══════════════════════════════════
-     PANEL 3: INCIDENTES
+     PANEL 4: EXPERIENCIA DE USUARIO
 ═══════════════════════════════════ -->
 <div id="p4" class="panel">
+  <div class="page-header">
+    <div class="ph-eye">Latencia en contexto real</div>
+    <div class="ph-title">2 ms no es una espera<br><em>perceptible para el usuario</em></div>
+    <div class="ph-sub">La comparación correcta no es “se duplicó”, sino “sigue muy por debajo de los umbrales humanos de percepción”.</div>
+  </div>
+  <div class="wrap">
+
+    <div class="slabel">Lectura correcta del dato</div>
+    <div class="ms-summary">
+      <div class="ms-summary-title">De &lt;1 ms a ~2 ms puede sonar grande, pero no lo es en experiencia real.</div>
+      <p>Matemáticamente puede parecer un aumento importante porque el número se duplica. Pero en experiencia de usuario, 2 milisegundos equivalen a 0,002 segundos. Ese tiempo está muy por debajo de los rangos donde una persona normalmente percibe lentitud en una aplicación o interacción.</p>
+      <p>El punto técnico para SOLCA es este: el aumento es medible con herramientas, pero no debería sentirse como lentitud para el usuario final en una operación normal. Lo que sí cambia es que ahora hay más validaciones de seguridad antes de permitir acciones potencialmente riesgosas.</p>
+    </div>
+
+    <div class="slabel">Comparación contra umbrales de experiencia — selecciona un punto</div>
+    <div class="ms-detail visible" id="ms-detail">
+      <div class="ms-detail-body">
+        <div class="ms-detail-title" id="ms-title">2 ms frente a la percepción humana</div>
+        <p id="ms-body">Un total aproximado de 2 ms sigue siendo 50 veces menor que 100 ms, un umbral usado ampliamente para describir una respuesta que se siente inmediata. Por eso, como dato aislado, 2 ms no debería ser percibido por el usuario como una espera.</p>
+      </div>
+      <div class="ms-metric">
+        <div class="ms-metric-num" id="ms-metric">50×</div>
+        <div class="ms-metric-label" id="ms-label">2 ms es 50 veces menor que 100 ms.</div>
+      </div>
+    </div>
+
+    <div class="ms-grid">
+      <div class="ms-card selected" onclick="showMs(this,0)">
+        <div class="ms-label">Dato observado</div>
+        <div class="ms-num">2<span style="font-size:18px;color:inherit;opacity:.45;">ms</span></div>
+        <div class="ms-desc">Tiempo aproximado actual por operación medida.</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,1)">
+        <div class="ms-label">Respuesta inmediata</div>
+        <div class="ms-num">100<span style="font-size:18px;color:inherit;opacity:.45;">ms</span></div>
+        <div class="ms-desc">Umbral clásico para que una acción se sienta instantánea.</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,2)">
+        <div class="ms-label">Buena experiencia</div>
+        <div class="ms-num">200<span style="font-size:18px;color:inherit;opacity:.45;">ms</span></div>
+        <div class="ms-desc">Referencia moderna de buena respuesta en interacción web.</div>
+      </div>
+      <div class="ms-card" onclick="showMs(this,3)">
+        <div class="ms-label">Pérdida de foco</div>
+        <div class="ms-num">1<span style="font-size:18px;color:inherit;opacity:.45;">s</span></div>
+        <div class="ms-desc">A partir de aquí el usuario empieza a perder continuidad.</div>
+      </div>
+    </div>
+
+    <div class="ms-conclusion">
+      En una clínica oncológica, el riesgo relevante no es agregar aproximadamente 1 ms de validación. El riesgo relevante es permitir que ransomware, robo de credenciales, documentos maliciosos o comportamiento anómalo pasen sin una revisión previa suficiente. La latencia debe medirse, pero debe interpretarse en proporción al riesgo clínico y operativo que se está reduciendo.
+    </div>
+
+    <div class="src-list" style="margin-bottom:32px;">
+      <div class="src-title">Fuentes usadas para esta pestaña</div>
+      <div class="src-item">
+        <span class="src-n">01</span>
+        <div class="src-t"><strong>Nielsen Norman Group</strong> — 0,1 segundos / 100 ms es el límite para que el usuario sienta una respuesta directa e inmediata.<br><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank">nngroup.com — Response Time Limits</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">02</span>
+        <div class="src-t"><strong>Google web.dev — INP</strong> — Una interacción web de 200 ms o menos se considera buena capacidad de respuesta.<br><a href="https://web.dev/articles/inp" target="_blank">web.dev — Interaction to Next Paint</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">03</span>
+        <div class="src-t"><strong>Google web.dev — RAIL</strong> — Después de 1 segundo, el usuario pierde foco sobre la tarea que está realizando.<br><a href="https://web.dev/articles/rail" target="_blank">web.dev — RAIL Model</a></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 5: INCIDENTES
+═══════════════════════════════════ -->
+<div id="p5" class="panel">
   <div class="page-header">
     <div class="ph-eye">No es riesgo teórico</div>
     <div class="ph-title">Hospitales reales,<br><em>consecuencias reales</em></div>
@@ -688,9 +776,9 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 </div>
 
 <!-- ═══════════════════════════════════
-     PANEL 4: Referencias
+     PANEL 6: Referencias
 ═══════════════════════════════════ -->
-<div id="p5" class="panel">
+<div id="p6" class="panel">
   <div class="page-header">
     <div class="ph-eye">Coresolutions — Referencias</div>
     <div class="ph-title">Los tres argumentos<br><em>que defienden la herramienta</em></div>
@@ -726,30 +814,42 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       <div class="src-title">Referencias verificadas</div>
       <div class="src-item">
         <span class="src-n">01</span>
-        <div class="src-t"><strong>Check Point Harmony Endpoint Admin Guide R81.20</strong> — Arquitectura del agente, File System Filter Driver, Behavioral Guard.<br><a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/CP_R81.20_Harmony_Endpoint_Server_AdminGuide.pdf" target="_blank">sc1.checkpoint.com — PDF oficial</a></div>
+        <div class="src-t"><strong>Nielsen Norman Group — Response Time Limits</strong> — Umbrales clásicos de percepción de respuesta: 0,1 s, 1 s y 10 s.<br><a href="https://www.nngroup.com/articles/response-times-3-important-limits/" target="_blank">nngroup.com</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">02</span>
-        <div class="src-t"><strong>MITRE ATT&CK Evaluations — Check Point</strong> — Evaluación independiente de capacidades de detección y bloqueo.<br><a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">attackevals.mitre-engenuity.org</a></div>
+        <div class="src-t"><strong>Google web.dev — Interaction to Next Paint</strong> — 200 ms o menos como umbral de buena respuesta en interacciones web.<br><a href="https://web.dev/articles/inp" target="_blank">web.dev</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">03</span>
-        <div class="src-t"><strong>AV-Comparatives Business Security Test Aug–Nov 2023</strong> — Impacto en rendimiento de soluciones EPP.<br><a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">av-comparatives.org</a></div>
+        <div class="src-t"><strong>Google web.dev — RAIL model</strong> — A partir de 1 segundo, el usuario pierde foco en la tarea.<br><a href="https://web.dev/articles/rail" target="_blank">web.dev</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">04</span>
-        <div class="src-t"><strong>Gartner Peer Insights — Harmony Endpoint reviews</strong> — Opiniones verificadas de usuarios reales sobre rendimiento.<br><a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">gartner.com</a></div>
+        <div class="src-t"><strong>Check Point Harmony Endpoint Admin Guide R81.20</strong> — Arquitectura del agente, Anti-Ransomware, Behavioral Guard y Forensics.<br><a href="https://sc1.checkpoint.com/documents/R81.20/SmartEndpoint_OLH/EN/CP_R81.20_Harmony_Endpoint_Server_AdminGuide.pdf" target="_blank">sc1.checkpoint.com — PDF oficial</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">05</span>
-        <div class="src-t"><strong>Hospital Clínic de Barcelona — Comunicado oficial ciberataque 2023</strong><br><a href="https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona" target="_blank">clinicbarcelona.org</a></div>
+        <div class="src-t"><strong>MITRE ATT&CK Evaluations — Check Point</strong> — Evaluación independiente de capacidades de detección y bloqueo.<br><a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">attackevals.mitre-engenuity.org</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">06</span>
-        <div class="src-t"><strong>CCSS Costa Rica — Ataque Hive Ransomware 2022</strong> — WeLiveSecurity / ESET<br><a href="https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/" target="_blank">welivesecurity.com</a></div>
+        <div class="src-t"><strong>AV-Comparatives Business Security Test Aug–Nov 2023</strong> — Impacto en rendimiento de soluciones EPP.<br><a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">av-comparatives.org</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">07</span>
+        <div class="src-t"><strong>Gartner Peer Insights — Harmony Endpoint reviews</strong> — Opiniones verificadas de usuarios reales sobre rendimiento.<br><a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">gartner.com</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">08</span>
+        <div class="src-t"><strong>Hospital Clínic de Barcelona — Comunicado oficial ciberataque 2023</strong><br><a href="https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona" target="_blank">clinicbarcelona.org</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">09</span>
+        <div class="src-t"><strong>CCSS Costa Rica — Ataque Hive Ransomware 2022</strong> — WeLiveSecurity / ESET<br><a href="https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/" target="_blank">welivesecurity.com</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">10</span>
         <div class="src-t"><strong>Kaspersky LATAM — Panorama de Amenazas Corporativas 2023–2024</strong> — 560.000 ataques ransomware bloqueados en empresas LATAM.<br><a href="https://latam.kaspersky.com/about/press-releases/empresas-de-america-latina-enfrentaron-mas-de-268-millones-de-ataques-en-un-ano-segun-kaspersky" target="_blank">latam.kaspersky.com</a></div>
       </div>
     </div>
@@ -799,6 +899,46 @@ function filterComp(cat, btn) {
     const cats = tr.dataset.cat || '';
     tr.classList.toggle('hidden', !cats.includes(cat));
   });
+}
+
+
+// ── LATENCY UX CARDS ──
+const msData = [
+  {
+    title: '2 ms frente a la percepción humana',
+    body: 'Un total aproximado de 2 ms sigue siendo 50 veces menor que 100 ms, un umbral usado ampliamente para describir una respuesta que se siente inmediata. Por eso, como dato aislado, 2 ms no debería ser percibido por el usuario como una espera.',
+    metric: '50×',
+    label: '2 ms es 50 veces menor que 100 ms.'
+  },
+  {
+    title: '100 ms: respuesta que se siente inmediata',
+    body: 'Nielsen Norman Group usa 0,1 segundos como límite para que el usuario sienta que el sistema responde directamente a su acción. El valor de ~2 ms está muy por debajo de ese umbral.',
+    metric: '0,002s',
+    label: '2 ms equivale a 0,002 segundos.'
+  },
+  {
+    title: '200 ms: referencia moderna de buena respuesta',
+    body: 'Google web.dev considera que una interacción de 200 ms o menos entra en el rango de buena capacidad de respuesta para experiencia web. ~2 ms es apenas el 1% de ese umbral.',
+    metric: '1%',
+    label: '2 ms representa solo el 1% de 200 ms.'
+  },
+  {
+    title: '1 segundo: donde empieza a romperse el foco',
+    body: 'El modelo RAIL de Google indica que por encima de 1 segundo el usuario pierde foco en la tarea. 2 ms está 500 veces por debajo de ese punto.',
+    metric: '500×',
+    label: '2 ms es 500 veces menor que 1 segundo.'
+  }
+];
+
+function showMs(card, i) {
+  document.querySelectorAll('.ms-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const d = msData[i];
+  document.getElementById('ms-title').textContent = d.title;
+  document.getElementById('ms-body').textContent = d.body;
+  document.getElementById('ms-metric').textContent = d.metric;
+  document.getElementById('ms-label').textContent = d.label;
+  document.getElementById('ms-detail').classList.add('visible');
 }
 
 // ── INCIDENTS ──
