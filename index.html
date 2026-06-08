@@ -136,6 +136,40 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 .info-box p{font-size:13px; color:var(--g600); font-weight:300; line-height:1.7;}
 
 
+/* SERVER OPTIMIZATION INTERACTIVE BLOCK */
+.server-opt{
+  background:var(--white); border:1px solid var(--border); border-left:4px solid var(--orange);
+  margin-top:32px; overflow:hidden;
+}
+.so-head{padding:22px 24px 18px; background:linear-gradient(90deg,var(--blue-lt),var(--white)); border-bottom:1px solid var(--border);}
+.so-kicker{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--orange); margin-bottom:8px;}
+.so-title{font-size:16px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.so-intro{font-size:13px; color:var(--g600); font-weight:300; line-height:1.65; max-width:790px;}
+.so-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border-bottom:1px solid var(--border);}
+.so-card{background:var(--white); padding:18px 18px; cursor:pointer; transition:all .18s; min-height:122px;}
+.so-card:hover{background:var(--blue-lt);}
+.so-card.active{background:var(--blue);}
+.so-num{font-family:'DM Mono',monospace; font-size:10px; color:var(--orange); margin-bottom:8px;}
+.so-card.active .so-num{color:rgba(255,255,255,.55);}
+.so-card-title{font-size:13px; font-weight:600; color:var(--blue); margin-bottom:7px; line-height:1.3;}
+.so-card.active .so-card-title{color:white;}
+.so-card-text{font-size:12px; color:var(--g500); font-weight:300; line-height:1.55;}
+.so-card.active .so-card-text{color:rgba(255,255,255,.58);}
+.so-detail{display:grid; grid-template-columns:1.15fr .85fr; gap:24px; padding:24px; align-items:start;}
+.so-detail-title{font-size:15px; font-weight:600; color:var(--blue); margin-bottom:8px;}
+.so-detail-body{font-size:13px; color:var(--g600); font-weight:300; line-height:1.7;}
+.so-side{display:grid; gap:10px;}
+.so-pill-row{display:flex; flex-wrap:wrap; gap:8px;}
+.so-pill{font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:6px 9px; background:var(--blue-lt); color:var(--blue); border:1px solid var(--border); border-radius:2px;}
+.so-metric{background:var(--g100); padding:13px 15px; border-radius:2px;}
+.so-metric-num{font-family:'DM Serif Display',serif; font-size:26px; color:var(--blue); line-height:1; margin-bottom:3px;}
+.so-metric-label{font-size:11px; color:var(--g500); font-weight:300; line-height:1.35;}
+.so-src{border-top:1px solid var(--border); padding:12px 24px 16px; font-family:'DM Mono',monospace; font-size:10px; color:var(--g300);}
+.so-src a{color:var(--blue2);}
+@media(max-width:780px){.so-grid,.so-detail{grid-template-columns:1fr;}.so-card{min-height:auto;}}
+
+
+
 /* ────────────────────────────────────────
    PANEL 2: COMPARATIVA
 ──────────────────────────────────────── */
@@ -242,7 +276,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 
 
 /* ────────────────────────────────────────
-   PANEL 4: EXPERIENCIA DE USUARIO
+   PANEL 3: EXPERIENCIA DE USUARIO
 ──────────────────────────────────────── */
 .ms-summary{
   background:var(--white); border:1px solid var(--border);
@@ -276,7 +310,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 .ms-sources a{color:var(--blue2);}
 
 /* ────────────────────────────────────────
-   PANEL 5: INCIDENTES
+   PANEL 4: INCIDENTES
 ──────────────────────────────────────── */
 .incidents{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border:1px solid var(--border); margin-bottom:32px;}
 .inc{background:var(--white); padding:20px; cursor:pointer; transition:background .15s;}
@@ -357,9 +391,9 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showPanel('p1',this)">01 — Situación</button>
   <button class="nav-tab" onclick="showPanel('p2',this)">02 — Comparativa</button>
-  <button class="nav-tab" onclick="showPanel('p4',this)">04 — Experiencia de usuario</button>
-  <button class="nav-tab" onclick="showPanel('p5',this)">05 — Incidentes reales</button>
-  <button class="nav-tab" onclick="showPanel('p6',this)">06 — Referencias</button>
+  <button class="nav-tab" onclick="showPanel('p4',this)">03 — Experiencia de usuario</button>
+  <button class="nav-tab" onclick="showPanel('p5',this)">04 — Incidentes reales</button>
+  <button class="nav-tab" onclick="showPanel('p6',this)">05 — Referencias</button>
 </div>
 
 <!-- ═══════════════════════════════════
@@ -385,7 +419,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       <div class="lat-card active">
         <div class="lat-tag">Check Point Harmony (ahora)</div>
         <div class="lat-num">~2<span>ms</span></div>
-        <div class="lat-desc">Inspección inline sincrónica a nivel de kernel. Analiza antes de permitir cada operación de archivo, proceso y red.</div>
+        <div class="lat-desc">Inspección local más profunda sobre archivos, procesos, red y comportamiento. Agrega validaciones antes de permitir acciones de riesgo.</div>
         <div class="lat-pill pill-s">Inspección sincrónica</div>
       </div>
     </div>
@@ -450,6 +484,48 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
     <div class="info-box">
       <div class="info-box-title">Active Directory debe evaluarse como componente crítico de autenticación</div>
       <p>Active Directory es un servicio central para el acceso de usuarios, políticas y recursos internos. Si el servidor opera con recursos ajustados o alta utilización, puede generar demoras en autenticación y acceso a aplicaciones, independientemente de la solución endpoint instalada. La recomendación es revisar memoria, CPU, disco, eventos del sistema, salud del servicio y volumen de consultas, para confirmar que el directorio tenga capacidad suficiente para responder sin degradación.</p>
+    </div>
+
+    <div class="server-opt">
+      <div class="so-head">
+        <div class="so-kicker">Servidores críticos</div>
+        <div class="so-title">Harmony debe aplicarse con perfil de servidor y recursos adecuados</div>
+        <div class="so-intro">En servidores, el punto no es instalar el agente con una política genérica. Check Point documenta optimizaciones por rol para que Endpoint aplique exclusiones y reglas adecuadas sin reducir la protección de forma indiscriminada.</div>
+      </div>
+      <div class="so-grid">
+        <div class="so-card active" onclick="showServerOpt(this,'roles')">
+          <div class="so-num">01</div>
+          <div class="so-card-title">Roles que requieren cuidado</div>
+          <div class="so-card-text">Controladores de dominio, bases de datos, DNS, DHCP, File Server, IIS y Terminal Server.</div>
+        </div>
+        <div class="so-card" onclick="showServerOpt(this,'policy')">
+          <div class="so-num">02</div>
+          <div class="so-card-title">Optimización por servidor</div>
+          <div class="so-card-text">Endpoint for Server Optimization aplica roles y exclusiones predefinidas según recomendaciones del fabricante.</div>
+        </div>
+        <div class="so-card" onclick="showServerOpt(this,'resources')">
+          <div class="so-num">03</div>
+          <div class="so-card-title">Recursos mínimos</div>
+          <div class="so-card-text">Para Total Endpoint Security, Check Point indica 8 GB RAM mínimo y 16 GB recomendado.</div>
+        </div>
+      </div>
+      <div class="so-detail">
+        <div>
+          <div class="so-detail-title" id="so-detail-title">No todos los equipos se comportan igual</div>
+          <div class="so-detail-body" id="so-detail-body">Un servidor de autenticación o base de datos no tiene el mismo patrón de uso que una estación de trabajo. Procesa más consultas, más permisos, más archivos abiertos y más servicios simultáneos. Por eso debe revisarse el rol del servidor antes de aplicar la política final.</div>
+        </div>
+        <div class="so-side" id="so-side">
+          <div class="so-pill-row">
+            <span class="so-pill">Domain Controller</span>
+            <span class="so-pill">SQL / DB</span>
+            <span class="so-pill">DNS / DHCP</span>
+            <span class="so-pill">File Server</span>
+            <span class="so-pill">IIS</span>
+            <span class="so-pill">Terminal Server</span>
+          </div>
+        </div>
+      </div>
+      <div class="so-src">Ref: <a href="https://sc1.checkpoint.com/documents/Infinity_Portal/WebAdminGuides/EN/Harmony-Endpoint-Admin-Guide/Topics-HEP/Optimizing-Endpoint-for-Servers.htm" target="_blank">Check Point — Optimizing Endpoint for Servers</a> · <a href="https://sc1.checkpoint.com/documents/E89.x/EN/Endpoint_Security_Clients_for_Windows_RN/Content/Topics-Endpoint_Security_Client_for_Windows_RN/Client-Requirements.htm" target="_blank">Check Point — Client Requirements E89.x</a></div>
     </div>
 
 
@@ -642,11 +718,11 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 
 
 <!-- ═══════════════════════════════════
-     PANEL 4: EXPERIENCIA DE USUARIO
+     PANEL 3: EXPERIENCIA DE USUARIO
 ═══════════════════════════════════ -->
 <div id="p4" class="panel">
   <div class="page-header">
-    <div class="ph-eye">Latencia en contexto real</div>
+    <div class="ph-eye">03 — Latencia en contexto real</div>
     <div class="ph-title">2 ms no es una espera<br><em>perceptible para el usuario</em></div>
     <div class="ph-sub">La comparación correcta no es “se duplicó”, sino “sigue muy por debajo de los umbrales humanos de percepción”.</div>
   </div>
@@ -718,11 +794,11 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 </div>
 
 <!-- ═══════════════════════════════════
-     PANEL 5: INCIDENTES
+     PANEL 4: INCIDENTES
 ═══════════════════════════════════ -->
 <div id="p5" class="panel">
   <div class="page-header">
-    <div class="ph-eye">No es riesgo teórico</div>
+    <div class="ph-eye">04 — No es riesgo teórico</div>
     <div class="ph-title">Hospitales reales,<br><em>consecuencias reales</em></div>
     <div class="ph-sub">Selecciona cada caso para ver el detalle — todos tienen fuente verificada</div>
   </div>
@@ -776,11 +852,11 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 </div>
 
 <!-- ═══════════════════════════════════
-     PANEL 6: Referencias
+     PANEL 5: Referencias
 ═══════════════════════════════════ -->
 <div id="p6" class="panel">
   <div class="page-header">
-    <div class="ph-eye">Coresolutions — Referencias</div>
+    <div class="ph-eye">05 — Referencias</div>
     <div class="ph-title">Los tres argumentos<br><em>que defienden la herramienta</em></div>
   </div>
   <div class="wrap">
@@ -800,7 +876,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       <div class="arg-card">
         <div class="arg-n">ARG 03</div>
         <div class="arg-title">Active Directory debe dimensionarse según su carga real</div>
-        <div class="arg-body">AD es un servicio crítico para autenticación y acceso a recursos internos. Si trabaja con recursos limitados o alta utilización, puede generar latencia independientemente de la solución endpoint. La revisión debe separar seguridad endpoint y capacidad del servidor AD.</div>
+        <div class="arg-body">AD es un servicio crítico para autenticación y acceso a recursos internos. Si trabaja con recursos limitados o alta utilización, puede generar latencia independientemente de la solución endpoint. En servidores, Harmony debe aplicarse con perfil de servidor, política adecuada y recursos suficientes.</div>
       </div>
     </div>
 
@@ -830,26 +906,34 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       </div>
       <div class="src-item">
         <span class="src-n">05</span>
-        <div class="src-t"><strong>MITRE ATT&CK Evaluations — Check Point</strong> — Evaluación independiente de capacidades de detección y bloqueo.<br><a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">attackevals.mitre-engenuity.org</a></div>
+        <div class="src-t"><strong>Check Point — Optimizing Endpoint Security Client for Servers</strong> — Servidores como Domain Controller, SQL, DNS, DHCP, IIS, File Server y Terminal Server requieren configuraciones específicas y perfiles de optimización por rol.<br><a href="https://sc1.checkpoint.com/documents/Infinity_Portal/WebAdminGuides/EN/Harmony-Endpoint-Admin-Guide/Topics-HEP/Optimizing-Endpoint-for-Servers.htm" target="_blank">sc1.checkpoint.com</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">06</span>
-        <div class="src-t"><strong>AV-Comparatives Business Security Test Aug–Nov 2023</strong> — Impacto en rendimiento de soluciones EPP.<br><a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">av-comparatives.org</a></div>
+        <div class="src-t"><strong>Check Point E89.x Client Requirements</strong> — Requisitos de hardware: 8 GB RAM mínimo y 16 GB RAM recomendado para el paquete Total Endpoint Security.<br><a href="https://sc1.checkpoint.com/documents/E89.x/EN/Endpoint_Security_Clients_for_Windows_RN/Content/Topics-Endpoint_Security_Client_for_Windows_RN/Client-Requirements.htm" target="_blank">sc1.checkpoint.com</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">07</span>
-        <div class="src-t"><strong>Gartner Peer Insights — Harmony Endpoint reviews</strong> — Opiniones verificadas de usuarios reales sobre rendimiento.<br><a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">gartner.com</a></div>
+        <div class="src-t"><strong>MITRE ATT&CK Evaluations — Check Point</strong> — Evaluación independiente de capacidades de detección y bloqueo.<br><a href="https://attackevals.mitre-engenuity.org/enterprise/participants/checkpoint" target="_blank">attackevals.mitre-engenuity.org</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">08</span>
-        <div class="src-t"><strong>Hospital Clínic de Barcelona — Comunicado oficial ciberataque 2023</strong><br><a href="https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona" target="_blank">clinicbarcelona.org</a></div>
+        <div class="src-t"><strong>AV-Comparatives Business Security Test Aug–Nov 2023</strong> — Impacto en rendimiento de soluciones EPP.<br><a href="https://www.av-comparatives.org/tests/business-security-test-2023-august-november/" target="_blank">av-comparatives.org</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">09</span>
-        <div class="src-t"><strong>CCSS Costa Rica — Ataque Hive Ransomware 2022</strong> — WeLiveSecurity / ESET<br><a href="https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/" target="_blank">welivesecurity.com</a></div>
+        <div class="src-t"><strong>Gartner Peer Insights — Harmony Endpoint reviews</strong> — Opiniones verificadas de usuarios reales sobre rendimiento.<br><a href="https://www.gartner.com/reviews/market/endpoint-protection-platforms/vendor/check-point/product/harmony-endpoint/reviews" target="_blank">gartner.com</a></div>
       </div>
       <div class="src-item">
         <span class="src-n">10</span>
+        <div class="src-t"><strong>Hospital Clínic de Barcelona — Comunicado oficial ciberataque 2023</strong><br><a href="https://www.clinicbarcelona.org/prensa/ultima-hora/ciberataque-al-hospital-clinic-de-barcelona" target="_blank">clinicbarcelona.org</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">11</span>
+        <div class="src-t"><strong>CCSS Costa Rica — Ataque Hive Ransomware 2022</strong> — WeLiveSecurity / ESET<br><a href="https://www.welivesecurity.com/la-es/2022/06/01/ransomware-hive-ataca-ccss-costa-rica/" target="_blank">welivesecurity.com</a></div>
+      </div>
+      <div class="src-item">
+        <span class="src-n">12</span>
         <div class="src-t"><strong>Kaspersky LATAM — Panorama de Amenazas Corporativas 2023–2024</strong> — 560.000 ataques ransomware bloqueados en empresas LATAM.<br><a href="https://latam.kaspersky.com/about/press-releases/empresas-de-america-latina-enfrentaron-mas-de-268-millones-de-ataques-en-un-ano-segun-kaspersky" target="_blank">latam.kaspersky.com</a></div>
       </div>
     </div>
@@ -1008,6 +1092,39 @@ function showInc(i) {
   det.classList.add('visible');
   det.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
+
+
+// ── SERVER OPTIMIZATION DETAIL ──
+const serverOptData = {
+  roles: {
+    title: 'No todos los equipos se comportan igual',
+    body: 'Un servidor de autenticación o base de datos no tiene el mismo patrón de uso que una estación de trabajo. Procesa más consultas, más permisos, más archivos abiertos y más servicios simultáneos. Por eso debe revisarse el rol del servidor antes de aplicar la política final.',
+    side: `<div class="so-pill-row">
+      <span class="so-pill">Domain Controller</span><span class="so-pill">SQL / DB</span><span class="so-pill">DNS / DHCP</span><span class="so-pill">File Server</span><span class="so-pill">IIS</span><span class="so-pill">Terminal Server</span>
+    </div>`
+  },
+  policy: {
+    title: 'La optimización no es apagar seguridad',
+    body: 'La optimización correcta consiste en aplicar una política de servidor según su rol. Esto permite mantener controles de seguridad, pero evitando inspecciones innecesarias sobre rutas, procesos o servicios que el fabricante ya contempla dentro de sus recomendaciones.',
+    side: `<div class="so-metric"><div class="so-metric-num">Perfil</div><div class="so-metric-label">Política ajustada al rol del servidor.</div></div>
+      <div class="so-metric"><div class="so-metric-num">Exclusiones</div><div class="so-metric-label">Predefinidas según recomendaciones de Microsoft y Check Point.</div></div>`
+  },
+  resources: {
+    title: 'Recursos bajos hacen más visible cualquier inspección adicional',
+    body: 'Si un servidor crítico trabaja con memoria o CPU al límite, cualquier capa adicional de validación puede sentirse más. Por eso, además de la política correcta, debe validarse la capacidad real del equipo, especialmente en controladores de dominio y servidores con alta concurrencia.',
+    side: `<div class="so-metric"><div class="so-metric-num">8 GB</div><div class="so-metric-label">RAM mínima documentada para Total Endpoint Security.</div></div>
+      <div class="so-metric"><div class="so-metric-num">16 GB</div><div class="so-metric-label">RAM recomendada por Check Point.</div></div>`
+  }
+};
+function showServerOpt(card, key) {
+  document.querySelectorAll('.so-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  const d = serverOptData[key];
+  document.getElementById('so-detail-title').textContent = d.title;
+  document.getElementById('so-detail-body').textContent = d.body;
+  document.getElementById('so-side').innerHTML = d.side;
+}
+
 </script>
 </body>
 </html>
