@@ -321,9 +321,8 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 <div class="nav-tabs">
   <button class="nav-tab active" onclick="showPanel('p1',this)">01 — Situación</button>
   <button class="nav-tab" onclick="showPanel('p2',this)">02 — Comparativa</button>
-  <button class="nav-tab" onclick="showPanel('p3',this)">03 — Módulos en riesgo</button>
-  <button class="nav-tab" onclick="showPanel('p4',this)">04 — Incidentes reales</button>
-  <button class="nav-tab" onclick="showPanel('p5',this)">05 — Referencias</button>
+  <button class="nav-tab" onclick="showPanel('p4',this)">03 — Incidentes reales</button>
+  <button class="nav-tab" onclick="showPanel('p5',this)">04 — Referencias</button>
 </div>
 
 <!-- ═══════════════════════════════════
@@ -331,7 +330,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 ═══════════════════════════════════ -->
 <div id="p1" class="panel active">
   <div class="page-header">
-    <div class="ph-eye">Coresolutions · SOLCA Cuenca · Uso interno</div>
+    <div class="ph-eye">Coresolutions · SOLCA Cuenca</div>
     <div class="ph-title">Por qué la latencia subió<br><em>y por qué es correcto</em></div>
     <div class="ph-sub">Check Point Harmony Endpoint vs. Kaspersky ESB Select + EDR Optimum</div>
   </div>
@@ -375,12 +374,12 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
     <div class="accord-item">
       <div class="accord-head" onclick="toggleAccord(this)">
         <span class="accord-num">02</span>
-        <span class="accord-title">Network Stack Hooking — inspección de tráfico AD en tiempo real</span>
+        <span class="accord-title">Inspección de tráfico de autenticación y servicios internos</span>
         <span class="accord-icon">+</span>
       </div>
       <div class="accord-body">
-        <p>El agente inspecciona conexiones de red antes de que se establezcan. Las solicitudes al Active Directory, bases de datos y aplicaciones internas pasan por este filtro. Eso añade microsegundos por operación — muy visible en AD-autenticación porque ocurre constantemente.</p>
-        <p>Esto explica específicamente el problema del día de instalación: el AD de SOLCA ya tenía 4GB de RAM al 100% (subdimensionado), y al sumársele la inspección de red de Harmony, los tiempos de respuesta se dispararon. El módulo causante se ajustó correctamente.</p>
+        <p>Harmony Endpoint inspecciona conexiones de red antes de permitir su establecimiento. En un entorno corporativo, esto incluye consultas de autenticación, acceso a servicios de directorio, bases de datos y aplicaciones internas. Al tratarse de operaciones frecuentes, el control de seguridad puede sumar microsegundos por operación, especialmente en procesos donde la autenticación se consulta de forma constante.</p>
+        <p>En el caso de Active Directory, su rendimiento depende directamente de la capacidad disponible del servidor y de la carga que tenga al momento de responder solicitudes. Si el servidor de directorio opera con recursos limitados o alta utilización de memoria/CPU, cualquier inspección adicional de seguridad puede hacer más visible la latencia existente. Por eso, la recomendación técnica es revisar la capacidad del servidor AD y asegurar recursos suficientes para sostener autenticación, políticas y consultas internas sin degradación.</p>
         <div class="accord-src">Ref: <a href="https://support.checkpoint.com" target="_blank">Check Point Support Center — Harmony Endpoint Network Performance</a></div>
       </div>
     </div>
@@ -412,8 +411,8 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
     </div>
 
     <div class="info-box">
-      <div class="info-box-title">El AD es un problema separado — no lo mezcles en la conversación</div>
-      <p>El Active Directory con 4 GB de RAM al 100% genera latencia en toda la red con o sin Harmony Endpoint. El conflicto del día de instalación fue un ajuste puntual, ya resuelto. El problema estructural es infraestructura subdimensionada preexistente. Son dos conversaciones distintas: una sobre seguridad (Harmony), otra sobre capacidad del servidor AD (recomendación: 8–16 GB RAM).</p>
+      <div class="info-box-title">Active Directory debe evaluarse como componente crítico de autenticación</div>
+      <p>Active Directory es un servicio central para el acceso de usuarios, políticas y recursos internos. Si opera con recursos ajustados o alta utilización, puede generar demoras en autenticación y acceso a aplicaciones, independientemente de la solución endpoint instalada. La recomendación es validar memoria, CPU, disco, eventos del sistema y volumen de consultas, y dimensionar el servidor de acuerdo con la carga real del entorno.</p>
     </div>
 
   </div>
@@ -627,111 +626,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 </div>
 
 <!-- ═══════════════════════════════════
-     PANEL 3: MÓDULOS EN RIESGO
-═══════════════════════════════════ -->
-<div id="p3" class="panel">
-  <div class="page-header">
-    <div class="ph-eye">Si se desactivan módulos para bajar latencia...</div>
-    <div class="ph-title">Lo que SOLCA dejaría<br><em>desprotegido</em></div>
-    <div class="ph-sub">Clic en cada módulo para ver qué protege y qué pasa si se apaga</div>
-  </div>
-  <div class="wrap">
-
-    <div class="risk-detail" id="risk-detail">
-      <div class="rd-title" id="rd-title"></div>
-      <div class="rd-sub" id="rd-sub"></div>
-      <div class="rd-grid">
-        <div class="rd-col">
-          <div class="rd-col-title">Qué protege</div>
-          <p id="rd-protects"></p>
-        </div>
-        <div class="rd-col danger">
-          <div class="rd-col-title">Riesgo si se desactiva</div>
-          <p id="rd-risk"></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="slabel">Módulos de alto impacto — selecciona uno</div>
-    <div class="risk-grid" id="risk-grid">
-
-      <div class="risk-card critical" onclick="showRisk(this,'Anti-Ransomware + IA','critical','Shadow Copy + File Decoy + IA comportamental',
-        'Monitoreo activo de patrones de cifrado masivo de archivos. Usa File Decoys (archivos trampa) que activan la alerta cuando son tocados por un proceso. Combinado con IA comportamental detecta ransomware en sus primeras acciones, antes de que cifre más de 5-10 archivos.',
-        'El ransomware puede cifrar cientos o miles de registros clínicos antes de ser detectado. Sin File Decoys ni IA, la detección solo ocurre cuando el daño ya es masivo. En SOLCA: expedientes de pacientes oncológicos potencialmente irrecuperables.')">
-        <div class="rc-top">
-          <div class="rc-name">Anti-Ransomware + IA</div>
-          <div class="rc-badge critical">Crítico</div>
-        </div>
-        <div class="rc-sub">Shadow Copy · File Decoy · IA comportamental</div>
-        <div class="rc-protects">Bloquea cifrado masivo en tiempo real antes de que el daño sea extenso.</div>
-      </div>
-
-      <div class="risk-card critical" onclick="showRisk(this,'Behavioral Guard','critical','Detección de comportamiento anómalo en procesos',
-        'Monitorea cada proceso en busca de técnicas de ataque: inyección de código (T1055), escalada de privilegios (T1068), movimiento lateral (T1021), credential dumping (T1003). No depende de firmas conocidas — detecta comportamiento.',
-        'Un atacante con acceso a un solo equipo puede moverse lateralmente por toda la red de SOLCA sin ser detectado. Herramientas como Mimikatz para robo de credenciales del AD pasarían sin alerta. Esto es exactamente lo que usó RansomHouse en el Hospital Clínic de Barcelona.')">
-        <div class="rc-top">
-          <div class="rc-name">Behavioral Guard</div>
-          <div class="rc-badge critical">Crítico</div>
-        </div>
-        <div class="rc-sub">Análisis comportamental · Sin dependencia de firmas</div>
-        <div class="rc-protects">Detecta amenazas desconocidas por comportamiento, no por firma. Clave contra zero-days.</div>
-      </div>
-
-      <div class="risk-card critical" onclick="showRisk(this,'Threat Emulation (Sandbox)','critical','Análisis de documentos antes de abrirlos',
-        'Ejecuta en sandbox cada archivo adjunto, PDF, Word, Excel antes de entregarlo al usuario. Detecta exploits embebidos en documentos aparentemente legítimos. Disponible en Advanced y Elite.',
-        'Un PDF o Excel malicioso enviado por correo puede comprometer el sistema antes de que el usuario lo abra visualmente. En un entorno hospitalario, esto puede dar acceso a la base de datos de pacientes. Es el vector de ataque más común en phishing dirigido (spear phishing) contra hospitales.')">
-        <div class="rc-top">
-          <div class="rc-name">Threat Emulation</div>
-          <div class="rc-badge critical">Crítico</div>
-        </div>
-        <div class="rc-sub">Sandbox · Análisis pre-apertura de documentos</div>
-        <div class="rc-protects">Analiza documentos en entorno aislado antes de que el usuario pueda abrirlos.</div>
-      </div>
-
-      <div class="risk-card critical" onclick="showRisk(this,'Threat Extraction (CDR)','critical','Content Disarm and Reconstruction',
-        'Reconstruye documentos eliminando todo contenido activo potencialmente malicioso (macros, scripts, campos dinámicos, objetos embebidos) antes de entregarlo al usuario. El usuario recibe el documento limpio mientras el original se analiza en sandbox.',
-        'Sin CDR, documentos con macros maliciosas o exploits embebidos llegan intactos al usuario. En SOLCA, donde el personal clínico recibe constantemente documentos de proveedores y pacientes, esto es una superficie de ataque continua. Kaspersky no tiene CDR en el tier contratado.')">
-        <div class="rc-top">
-          <div class="rc-name">Threat Extraction (CDR)</div>
-          <div class="rc-badge critical">Crítico</div>
-        </div>
-        <div class="rc-sub">Limpieza activa de documentos maliciosos</div>
-        <div class="rc-protects">Entrega documentos limpios al usuario mientras analiza el original en sandbox.</div>
-      </div>
-
-      <div class="risk-card high" onclick="showRisk(this,'Zero Phishing','high','Inspección activa de URLs en tiempo real',
-        'Inspecciona URLs en tiempo real antes de que la página cargue — no depende de listas negras estáticas. Detecta sitios de phishing recién creados que aún no están en ninguna base de datos. Incluye protección contra reutilización de contraseñas corporativas.',
-        'Sin Zero Phishing, los usuarios de SOLCA pueden acceder a sitios de phishing diseñados específicamente para parecer proveedores médicos o sistemas de salud. Las credenciales del AD podrían ser comprometidas por este vector, dando acceso remoto a la red interna del hospital.')">
-        <div class="rc-top">
-          <div class="rc-name">Zero Phishing</div>
-          <div class="rc-badge high">Alto</div>
-        </div>
-        <div class="rc-sub">Inspección URL real-time · Sin listas estáticas</div>
-        <div class="rc-protects">Bloquea sitios de phishing desconocidos antes de que la página cargue.</div>
-      </div>
-
-      <div class="risk-card high" onclick="showRisk(this,'Corporate Password Protection','high','Prevención de reutilización y robo de credenciales',
-        'Detecta cuando un usuario intenta reutilizar contraseñas corporativas en sitios externos, o cuando un proceso intenta extraer hashes de contraseñas del sistema. Protección contra credential dumping (Mimikatz et al.).',
-        'Las credenciales del AD de SOLCA son la llave maestra de toda su infraestructura. Sin esta protección, un atacante que obtenga una contraseña corporativa puede intentar usarla en múltiples sistemas. Kaspersky ESB Select + EDR Optimum NO tiene esta protección — es una brecha explícita en la comparativa oficial.')">
-        <div class="rc-top">
-          <div class="rc-name">Corporate Password Protection</div>
-          <div class="rc-badge high">Alto</div>
-        </div>
-        <div class="rc-sub">Credential dumping · Reutilización de contraseñas</div>
-        <div class="rc-protects">Protege credenciales del AD contra extracción y reutilización. Kaspersky no lo tenía.</div>
-      </div>
-
-    </div>
-
-    <div class="info-box">
-      <p>Cualquier ajuste de módulos debe quedar documentado formalmente con la firma del responsable de SOLCA, aceptando explícitamente la reducción de cobertura de seguridad. Es la práctica estándar en proyectos de seguridad gestionada.</p>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════
-     PANEL 4: INCIDENTES
+     PANEL 3: INCIDENTES
 ═══════════════════════════════════ -->
 <div id="p4" class="panel">
   <div class="page-header">
@@ -789,11 +684,11 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 </div>
 
 <!-- ═══════════════════════════════════
-     PANEL 5: Referencias
+     PANEL 4: Referencias
 ═══════════════════════════════════ -->
 <div id="p5" class="panel">
   <div class="page-header">
-    <div class="ph-eye">Coresolutions — Referencias para uso en reunión</div>
+    <div class="ph-eye">Coresolutions — Referencias</div>
     <div class="ph-title">Los tres argumentos<br><em>que defienden la herramienta</em></div>
   </div>
   <div class="wrap">
@@ -812,8 +707,8 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
       </div>
       <div class="arg-card">
         <div class="arg-n">ARG 03</div>
-        <div class="arg-title">El AD es un problema de infraestructura preexistente</div>
-        <div class="arg-body">4 GB de RAM al 100% es un servidor subdimensionado independiente de Harmony. El conflicto del día de instalación fue un ajuste ya resuelto. Son dos conversaciones: seguridad (Harmony) e infraestructura (AD).</div>
+        <div class="arg-title">Active Directory debe dimensionarse según su carga real</div>
+        <div class="arg-body">AD es un servicio crítico para autenticación y acceso a recursos internos. Si trabaja con recursos limitados o alta utilización, puede generar latencia independientemente de la solución endpoint. La revisión debe separar seguridad endpoint y capacidad del servidor AD.</div>
       </div>
     </div>
 
@@ -862,7 +757,7 @@ body{font-family:'Outfit',sans-serif;background:var(--g50);color:var(--g700);min
 <div class="footer">
   <div class="footer-l">
     <div class="footer-dot"></div>
-    <div class="footer-brand">Coresolutions S.A. — Uso interno</div>
+    <div class="footer-brand">Coresolutions S.A.</div>
   </div>
   <div class="footer-date">Junio 2025 · SOLCA Cuenca · Check Point Harmony Endpoint</div>
 </div>
@@ -899,19 +794,6 @@ function filterComp(cat, btn) {
     const cats = tr.dataset.cat || '';
     tr.classList.toggle('hidden', !cats.includes(cat));
   });
-}
-
-// ── RISK CARDS ──
-function showRisk(card, name, level, sub, protects, risk) {
-  document.querySelectorAll('.risk-card').forEach(c => c.classList.remove('selected'));
-  card.classList.add('selected');
-  document.getElementById('rd-title').textContent = name;
-  document.getElementById('rd-sub').textContent = sub;
-  document.getElementById('rd-protects').textContent = protects;
-  document.getElementById('rd-risk').textContent = risk;
-  const det = document.getElementById('risk-detail');
-  det.classList.add('visible');
-  det.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // ── INCIDENTS ──
